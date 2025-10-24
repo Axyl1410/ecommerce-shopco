@@ -9,6 +9,9 @@
     "generate": "npx prisma generate",
     "studio": "npx prisma studio",
     "postinstall": "prisma generate",
+    "seed": "npx tsx prisma/seed.ts",
+    "db:seed": "npx tsx prisma/seed.ts",
+    "seed:run": "node scripts/seed.js",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write ."
@@ -75,14 +78,17 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.6",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
+    "bcryptjs": "^2.4.3",
     "husky": "^9.1.7",
     "postcss": "^8",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "shadcn": "^3.4.2",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.7.2",
     "typescript": "^5"
   },
   "packageManager": "pnpm@10.12.4+sha512.5ea8b0deed94ed68691c9bad4c955492705c5eeb8a87ef86bc62c74a26b037b08ff9570f108b2e4dbd1dd1a9186fea925e527f141c648e85af45631074680184"

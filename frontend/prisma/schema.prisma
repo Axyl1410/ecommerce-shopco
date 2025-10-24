@@ -19,6 +19,7 @@ model User {
   email         String
   emailVerified Boolean   @default(false)
   image         String?
+  phone         String?   // Primary contact phone number
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now()) @updatedAt
   sessions      Session[]
@@ -100,13 +101,17 @@ model Address {
   phone       String // SĐT người nhận
   addressLine String // Địa chỉ chi tiết (số nhà, đường)
   city        String // Thành phố
-  district    String // Quận/Huyện
+  district    String? // Quận/Huyện (optional)
   province    String // Phường/Xã (hoặc Tỉnh/Thành)
   postalCode  String?
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())
 
   // orders      Order[]  // Không cần, đã snapshot địa chỉ vào Order
+  
+  // Indexes for better query performance
+  @@index([userId]) // Fast lookups by user
+  @@index([userId, isDefault]) // Fast default address queries
   @@map("address")
 }
 

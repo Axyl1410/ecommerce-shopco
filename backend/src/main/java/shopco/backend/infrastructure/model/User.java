@@ -30,6 +30,8 @@ public class User {
 
   private String image;
 
+  private String phone; // Primary contact phone number
+
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;

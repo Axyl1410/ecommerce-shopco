@@ -9,7 +9,7 @@ const AddressSchema = z.object({
   phone: z.string().min(8),
   addressLine: z.string().min(3),
   city: z.string().min(1),
-  district: z.string().min(1),
+  district: z.string().optional(),
   province: z.string().min(1),
   postalCode: z.string().optional(),
   isDefault: z.boolean().optional(),
@@ -36,12 +36,41 @@ export async function POST(req: Request) {
 
   const data = parsed.data;
 
-  if (data.isDefault) {
-    await prisma.address.updateMany({ where: { userId: session.user.id }, data: { isDefault: false } });
-  }
+  // Use transaction for atomic operations
+  const created = await prisma.$transaction(async (tx) => {
+    // If this is default, reset others first
+    if (data.isDefault) {
+      await tx.address.updateMany({ 
+        where: { userId: session.user.id }, 
+        data: { isDefault: false } 
+      });
+    }
 
-  const created = await prisma.address.create({
-    data: { userId: session.user.id, ...data, isDefault: !!data.isDefault },
+    // Create new address with minimal select for faster response
+    return tx.address.create({
+      data: { 
+        userId: session.user.id, 
+        name: data.name,
+        phone: data.phone,
+        addressLine: data.addressLine,
+        city: data.city,
+        district: data.district || "",
+        province: data.province,
+        postalCode: data.postalCode,
+        isDefault: !!data.isDefault 
+      },
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        addressLine: true,
+        city: true,
+        district: true,
+        province: true,
+        postalCode: true,
+        isDefault: true
+      }
+    });
   });
 
   return NextResponse.json({ address: created }, { status: 201 });

@@ -29,6 +29,7 @@ const profileSchema = z.object({
     .min(2, "Name must be at least 2 characters")
     .max(100, "Name is too long"),
   email: z.string().email("Invalid email address"),
+  phone: z.string().optional().or(z.literal("")),
   avatarUrl: z.string().optional().or(z.literal("")),
 });
 
@@ -53,12 +54,24 @@ export function ProfileForm({
     defaultValues: {
       name: defaultValues.name ?? "",
       email: defaultValues.email,
+      phone: defaultValues.phone ?? "",
       avatarUrl: defaultValues.avatarUrl ?? "",
     },
     mode: "onTouched",
   });
 
   const avatarUrl = form.watch("avatarUrl");
+
+  // Update form values when defaultValues change (important for phone field)
+  useEffect(() => {
+    const newValues = {
+      name: defaultValues.name ?? "",
+      email: defaultValues.email,
+      phone: defaultValues.phone ?? "",
+      avatarUrl: defaultValues.avatarUrl ?? "",
+    };
+    form.reset(newValues, { keepDirty: false });
+  }, [defaultValues.name, defaultValues.email, defaultValues.phone, defaultValues.avatarUrl]);
 
   // Load avatar từ defaultValues khi component mount hoặc khi defaultValues thay đổi
   useEffect(() => {
@@ -234,6 +247,29 @@ export function ProfileForm({
                     </FormControl>
                     <FormDescription>
                       Email used for login and cannot be changed
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base">Phone Number (Optional)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="tel"
+                        placeholder="Enter your phone number" 
+                        {...field}
+                        disabled={saving}
+                        className="h-11"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Your primary contact number
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

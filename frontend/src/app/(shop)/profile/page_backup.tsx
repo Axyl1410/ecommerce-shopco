@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, MapPin, Package } from "lucide-react";
 
-// Lazy load heavy components for better performance
+// Lazy load heavy components
 const AddressBook = lazy(() => 
   import("@/components/profile-page/AddressBook").then(mod => ({ default: mod.AddressBook }))
 );
@@ -33,10 +33,11 @@ export default function ProfileRoutePage() {
   const [addressesLoading, setAddressesLoading] = useState(false);
   const [activityLoading, setActivityLoading] = useState(false);
   
-  // Track which data has been loaded to avoid refetching
+  // Track which data has been loaded
   const [loadedTabs, setLoadedTabs] = useState<Set<string>>(new Set(["personal"]));
 
   const user = useMemo(() => {
+    // Prioritize profile data from API over session data
     const source = profileData || data?.user;
     const name = source?.name ?? "User";
     const email = source?.email ?? "user@example.com";
@@ -70,7 +71,7 @@ export default function ProfileRoutePage() {
 
   // Lazy load addresses when tab is clicked
   const fetchAddresses = useCallback(async () => {
-    if (loadedTabs.has("addresses")) return;
+    if (loadedTabs.has("addresses")) return; // Already loaded
     
     try {
       setAddressesLoading(true);
@@ -90,7 +91,7 @@ export default function ProfileRoutePage() {
 
   // Lazy load activity data when tab is clicked
   const fetchActivity = useCallback(async () => {
-    if (loadedTabs.has("activity")) return;
+    if (loadedTabs.has("activity")) return; // Already loaded
     
     try {
       setActivityLoading(true);
@@ -148,7 +149,7 @@ export default function ProfileRoutePage() {
 
       const result = await res.json();
       
-      // Optimistic update
+      // Optimistic update - update UI immediately
       if (result.user) {
         setProfileData(result.user);
       }
@@ -159,6 +160,7 @@ export default function ProfileRoutePage() {
         variant: "default"
       });
       
+      // No need to refresh router - optimistic update already done
     } catch (e: any) {
       console.error(e);
       toast({ 
@@ -171,38 +173,17 @@ export default function ProfileRoutePage() {
     }
   }, []);
 
-  const mappedOrders = useMemo(() => 
-    orders.map(o => ({
-      id: o.id,
-      code: o.orderNo || `ORD-${o.id.substring(0, 8)}`,
-      createdAt: o.createdAt,
-      total: o.total || 0,
-      status: o.status || "pending",
-      itemsCount: o.items?.length || 0,
-    })),
-    [orders]
-  );
-
-  const mappedReviews = useMemo(() => 
-    reviews.map(r => ({
-      id: r.id,
-      user: user.name,
-      rating: r.rating || 5,
-      content: r.body || "",
-      date: r.createdAt || new Date().toISOString(),
-    })),
-    [reviews, user.name]
-  );
-
   if (!data?.user) {
     return (
       <div className="container max-w-4xl mx-auto py-8 px-4">
         <div className="space-y-6">
+          {/* Header Skeleton */}
           <div className="space-y-2 text-center">
             <Skeleton className="h-10 w-64 mx-auto" />
             <Skeleton className="h-4 w-96 mx-auto max-w-full" />
           </div>
 
+          {/* Profile Card Skeleton */}
           <Card className="overflow-hidden">
             <div className="h-32 bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse" />
             <CardContent className="relative pt-0 pb-6">
@@ -216,14 +197,23 @@ export default function ProfileRoutePage() {
             </CardContent>
           </Card>
 
+          {/* Form Card Skeleton */}
           <Card>
             <CardHeader>
               <Skeleton className="h-6 w-48" />
               <Skeleton className="h-4 w-96 mt-2 max-w-full" />
             </CardHeader>
             <CardContent className="space-y-6">
-              <Skeleton className="h-11 w-full" />
-              <Skeleton className="h-11 w-full" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-3 w-64" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-3 w-64" />
+              </div>
               <Skeleton className="h-10 w-32 ml-auto" />
             </CardContent>
           </Card>
@@ -311,100 +301,73 @@ export default function ProfileRoutePage() {
                   }
                 }}
                 onUpdate={async (id, payload) => {
-                  // Optimistic update with rollback
+                  // Optimistic update
                   const oldAddresses = [...addresses];
                   setAddresses(prev => prev.map(a => a.id === id ? { ...a, ...payload } : a));
                   
-                  try {
-                    const res = await fetch(`/api/addresses/${id}`, {
-                      method: "PATCH",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify(payload),
-                    });
-                    
-                    if (res.ok) {
-                      const data = await res.json();
-                      setAddresses(prev => prev.map(a => a.id === id ? data.address : a));
-                      toast({ title: "Success", description: "Address updated" });
-                    } else {
-                      setAddresses(oldAddresses);
-                      throw new Error("Failed to update address");
-                    }
-                  } catch (error) {
+                  const res = await fetch(`/api/addresses/${id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                  });
+                  if (res.ok) {
+                    const data = await res.json();
+                    setAddresses(prev => prev.map(a => a.id === id ? data.address : a));
+                    toast({ title: "Success", description: "Address updated" });
+                  } else {
+                    // Rollback on error
                     setAddresses(oldAddresses);
-                    throw error;
+                    throw new Error("Failed to update address");
+                  }
                   }
                 }}
                 onDelete={async (id) => {
-                  // Optimistic update with rollback
-                  const oldAddresses = [...addresses];
-                  setAddresses(prev => prev.filter(a => a.id !== id));
-                  
-                  try {
-                    const res = await fetch(`/api/addresses/${id}`, {
-                      method: "DELETE",
-                    });
-                    
-                    if (res.ok) {
-                      toast({ title: "Success", description: "Address deleted" });
-                    } else {
-                      setAddresses(oldAddresses);
-                      throw new Error("Failed to delete address");
-                    }
-                  } catch (error) {
-                    setAddresses(oldAddresses);
-                    throw error;
+                  const res = await fetch(`/api/addresses/${id}`, {
+                    method: "DELETE",
+                  });
+                  if (res.ok) {
+                    await fetchData();
+                    toast({ title: "Success", description: "Address deleted" });
+                  } else {
+                    throw new Error("Failed to delete address");
                   }
                 }}
                 onSetDefault={async (id) => {
-                  // Optimistic update
-                  const oldAddresses = [...addresses];
-                  setAddresses(prev => prev.map(a => ({ ...a, isDefault: a.id === id })));
-                  
-                  try {
-                    const res = await fetch(`/api/addresses/${id}`, {
-                      method: "PATCH",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ isDefault: true }),
-                    });
-                    
-                    if (res.ok) {
-                      toast({ title: "Success", description: "Default address updated" });
-                    } else {
-                      setAddresses(oldAddresses);
-                      throw new Error("Failed to set default address");
-                    }
-                  } catch (error) {
-                    setAddresses(oldAddresses);
-                    throw error;
+                  const res = await fetch(`/api/addresses/${id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ isDefault: true }),
+                  });
+                  if (res.ok) {
+                    await fetchData();
+                    toast({ title: "Success", description: "Default address updated" });
+                  } else {
+                    throw new Error("Failed to set default address");
                   }
                 }}
               />
-            )}
-          </Suspense>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="activity" className="space-y-6">
-          <Suspense fallback={
-            <Card>
-              <CardContent className="space-y-4 pt-6">
-                <Skeleton className="h-48 w-full" />
-              </CardContent>
-            </Card>
-          }>
-            {activityLoading ? (
-              <Card>
-                <CardContent className="space-y-4 pt-6">
-                  <Skeleton className="h-48 w-full" />
-                </CardContent>
-              </Card>
-            ) : (
-              <ActivityHistory 
-                orders={mappedOrders}
-                reviews={mappedReviews}
-              />
-            )}
-          </Suspense>
+          <ActivityHistory 
+            orders={orders.map(order => ({
+              id: order.id,
+              code: order.orderNo || order.id,
+              createdAt: order.createdAt,
+              total: Number(order.finalAmount || 0),
+              status: order.orderStatus?.toLowerCase() || "pending",
+              itemsCount: order.items?.length || 0,
+            }))} 
+            reviews={reviews.map(review => ({
+              id: Number(review.id) || 0,
+              user: user.name,
+              content: review.body || review.title || "",
+              rating: review.rating,
+              date: new Date(review.createdAt).toISOString(),
+            }))}
+          />
         </TabsContent>
       </Tabs>
     </div>

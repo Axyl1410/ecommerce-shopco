@@ -26,9 +26,9 @@ export type ProfileFormValues = z.infer<typeof profileSchema>;
 const profileSchema = z.object({
   name: z
     .string()
-    .min(2, "Tên phải có ít nhất 2 ký tự")
-    .max(100, "Tên quá dài"),
-  email: z.string().email("Email không hợp lệ"),
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name is too long"),
+  email: z.string().email("Invalid email address"),
   avatarUrl: z.string().optional().or(z.literal("")),
 });
 
@@ -79,13 +79,13 @@ export function ProfileForm({
     
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      alert('Vui lòng chọn file ảnh');
+      alert('Please select an image file');
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('Kích thước ảnh không được vượt quá 5MB');
+      alert('Image size must not exceed 5MB');
       return;
     }
     
@@ -115,7 +115,7 @@ export function ProfileForm({
       }
     } catch (error: any) {
       console.error("Error uploading avatar:", error);
-      alert(error.message || 'Không thể upload ảnh');
+      alert(error.message || 'Failed to upload image');
     } finally {
       setUploading(false);
     }
@@ -168,7 +168,7 @@ export function ProfileForm({
                 <h2 className="text-2xl md:text-3xl font-bold">{defaultValues.name}</h2>
                 <Badge variant="secondary" className="hidden md:inline-flex">
                   <User className="h-3 w-3 mr-1" />
-                  Thành viên
+                  Member
                 </Badge>
               </div>
               <div className="flex flex-col md:flex-row gap-2 md:gap-4 text-sm text-muted-foreground">
@@ -185,9 +185,9 @@ export function ProfileForm({
       {/* Edit Profile Form Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Chỉnh sửa thông tin</CardTitle>
+          <CardTitle>Edit Information</CardTitle>
           <CardDescription>
-            Cập nhật thông tin cá nhân của bạn. Email không thể thay đổi.
+            Update your personal information. Email cannot be changed.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -201,17 +201,17 @@ export function ProfileForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">Họ và tên</FormLabel>
+                    <FormLabel className="text-base">Full Name</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Nhập họ và tên của bạn" 
+                        placeholder="Enter your full name" 
                         {...field}
                         disabled={saving}
                         className="h-11"
                       />
                     </FormControl>
                     <FormDescription>
-                      Tên này sẽ được hiển thị công khai trên tài khoản của bạn
+                      This name will be displayed publicly on your account
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -233,7 +233,7 @@ export function ProfileForm({
                       />
                     </FormControl>
                     <FormDescription>
-                      Email dùng để đăng nhập và không thể thay đổi
+                      Email used for login and cannot be changed
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -245,10 +245,10 @@ export function ProfileForm({
                 name="avatarUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">URL Avatar (Tùy chọn)</FormLabel>
+                    <FormLabel className="text-base">Avatar URL (Optional)</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="https://example.com/avatar.jpg hoặc /uploads/avatars/image.jpg" 
+                        placeholder="https://example.com/avatar.jpg or /uploads/avatars/image.jpg" 
                         {...field}
                         disabled={saving}
                         className="h-11"
@@ -263,7 +263,7 @@ export function ProfileForm({
                       />
                     </FormControl>
                     <FormDescription>
-                      Nhập URL của ảnh đại diện hoặc upload file ở trên
+                      Enter avatar image URL or upload a file above
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -280,7 +280,7 @@ export function ProfileForm({
                   disabled={saving || !form.formState.isDirty}
                   className="w-full md:w-auto"
                 >
-                  Hủy bỏ
+                  Cancel
                 </Button>
                 <Button 
                   type="submit" 
@@ -290,10 +290,10 @@ export function ProfileForm({
                   {saving ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Đang lưu...
+                      Saving...
                     </>
                   ) : (
-                    "Lưu thay đổi"
+                    "Save Changes"
                   )}
                 </Button>
               </div>

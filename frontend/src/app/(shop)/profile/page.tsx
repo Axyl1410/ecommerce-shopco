@@ -14,7 +14,7 @@ export default function ProfileRoutePage() {
   const [saving, setSaving] = useState(false);
 
   const user = useMemo(() => {
-    const name = data?.user?.name ?? "Người dùng";
+    const name = data?.user?.name ?? "User";
     const email = data?.user?.email ?? "user@example.com";
     const avatarUrl = data?.user?.image ?? "";
     return { name, email, avatarUrl };
@@ -30,12 +30,12 @@ export default function ProfileRoutePage() {
       });
       
       if (!res.ok) {
-        throw new Error("Cập nhật hồ sơ thất bại");
+        throw new Error("Failed to update profile");
       }
       
       toast({ 
-        title: "Thành công", 
-        description: "Hồ sơ đã được cập nhật",
+        title: "Success", 
+        description: "Your profile has been updated",
         variant: "default"
       });
       
@@ -44,8 +44,8 @@ export default function ProfileRoutePage() {
     } catch (e: any) {
       console.error(e);
       toast({ 
-        title: "Lỗi", 
-        description: e.message || "Không thể cập nhật hồ sơ",
+        title: "Error", 
+        description: e.message || "Failed to update profile",
         variant: "destructive"
       });
     } finally {
@@ -105,9 +105,9 @@ export default function ProfileRoutePage() {
   return (
     <div className="container max-w-4xl mx-auto py-8">
       <div className="mb-8 space-y-2 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">Hồ sơ cá nhân</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Profile</h1>
         <p className="text-lg text-muted-foreground">
-          Quản lý thông tin tài khoản và cài đặt cá nhân của bạn
+          Manage your account information and personal settings
         </p>
       </div>
       

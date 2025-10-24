@@ -1,161 +1,120 @@
 "use client";
 
-import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { ProfilePage } from "@/components/profile-page";
-import type { Address } from "@/components/profile-page/AddressBook";
-import type { OrderSummary } from "@/components/profile-page/ActivityHistory";
-import type { Review } from "@/types/review.types";
+import React, { useMemo, useCallback, useState } from "react";
+import { ProfileForm } from "@/components/profile-page/ProfileForm";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function ProfileRoutePage() {
   const { data } = useSession();
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
 
   const user = useMemo(() => {
     const name = data?.user?.name ?? "Người dùng";
     const email = data?.user?.email ?? "user@example.com";
-    const phone = (data?.user as any)?.phone ?? "";
-    const avatarUrl = (data?.user as any)?.image ?? "";
-    return { name, email, phone, avatarUrl };
+    const avatarUrl = data?.user?.image ?? "";
+    return { name, email, avatarUrl };
   }, [data]);
 
-  // State loaded from API
-  const [addresses, setAddresses] = useState<Address[]>([]);
-  const [creating, setCreating] = useState(false);
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const [orders] = useState<OrderSummary[]>([]);
-  const [reviews] = useState<Review[]>([]);
-
-  // Load addresses on mount
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch("/api/addresses", { cache: "no-store" });
-        if (!res.ok) throw new Error("Không tải được danh sách địa chỉ");
-        const data = await res.json();
-        setAddresses(data.addresses || []);
-      } catch (e: any) {
-        console.error(e);
-        toast({ title: "Lỗi", description: e.message || "Không thể tải địa chỉ" });
-      }
-    };
-    load();
-  }, []);
-
-  // Handlers calling API
   const handleUpdateProfile = useCallback(async (values: any) => {
     try {
+      setSaving(true);
       const res = await fetch("/api/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: values.name, avatarUrl: values.avatarUrl }),
       });
-      if (!res.ok) throw new Error("Cập nhật hồ sơ thất bại");
-      toast({ title: "Đã lưu", description: "Hồ sơ đã được cập nhật" });
-    } catch (e: any) {
-      console.error(e);
-      toast({ title: "Lỗi", description: e.message || "Không thể cập nhật hồ sơ" });
-    }
-  }, []);
-
-  const handleCreate = useCallback(async (payload: Omit<Address, "id"> | any): Promise<Address> => {
-    try {
-      setCreating(true);
-      const res = await fetch("/api/addresses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error("Thêm địa chỉ thất bại");
-      const data = await res.json();
-      const created: Address = data.address;
-      setAddresses((prev) => [created, ...prev.map(a => payload.isDefault ? { ...a, isDefault: false } : a)]);
-      toast({ title: "Thành công", description: "Đã thêm địa chỉ" });
-      return created;
-    } catch (e: any) {
-      console.error(e);
-      toast({ title: "Lỗi", description: e.message || "Không thể thêm địa chỉ" });
-      throw e;
-    } finally {
-      setCreating(false);
-    }
-  }, []);
-
-  const handleUpdate = useCallback(async (id: string, payload: Partial<Address> | any) => {
-    setUpdatingId(id);
-    try {
-      const res = await fetch(`/api/addresses/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error("Cập nhật địa chỉ thất bại");
-      const data = await res.json();
-      const updated: Address = data.address;
-      setAddresses((prev) => prev.map((a) => (a.id === id ? { ...a, ...updated } : a)));
-      if (updated.isDefault) {
-        setAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })));
+      
+      if (!res.ok) {
+        throw new Error("Cập nhật hồ sơ thất bại");
       }
-      toast({ title: "Đã lưu", description: "Địa chỉ đã được cập nhật" });
-    } catch (e: any) {
-      console.error(e);
-      toast({ title: "Lỗi", description: e.message || "Không thể cập nhật địa chỉ" });
-    } finally {
-      setUpdatingId(null);
-    }
-  }, []);
-
-  const handleDelete = useCallback(async (id: string) => {
-    setDeletingId(id);
-    try {
-      const res = await fetch(`/api/addresses/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Xoá địa chỉ thất bại");
-      setAddresses((prev) => prev.filter((a) => a.id !== id));
-      toast({ title: "Đã xoá", description: "Địa chỉ đã được xoá" });
-    } catch (e: any) {
-      console.error(e);
-      toast({ title: "Lỗi", description: e.message || "Không thể xoá địa chỉ" });
-    } finally {
-      setDeletingId(null);
-    }
-  }, []);
-
-  const handleSetDefault = useCallback(async (id: string) => {
-    try {
-      const res = await fetch(`/api/addresses/default`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
+      
+      toast({ 
+        title: "Thành công", 
+        description: "Hồ sơ đã được cập nhật",
+        variant: "default"
       });
-      if (!res.ok) throw new Error("Đặt mặc định thất bại");
-      setAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })));
+      
+      // Refresh để cập nhật session
+      router.refresh();
     } catch (e: any) {
       console.error(e);
-      toast({ title: "Lỗi", description: e.message || "Không thể đặt mặc định" });
+      toast({ 
+        title: "Lỗi", 
+        description: e.message || "Không thể cập nhật hồ sơ",
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
     }
-  }, []);
+  }, [router]);
+
+  if (!data?.user) {
+    return (
+      <div className="container max-w-4xl mx-auto py-8">
+        <div className="space-y-6">
+          {/* Header Skeleton */}
+          <div className="space-y-2 text-center">
+            <Skeleton className="h-10 w-64 mx-auto" />
+            <Skeleton className="h-4 w-96 mx-auto" />
+          </div>
+
+          {/* Profile Card Skeleton */}
+          <Card className="overflow-hidden">
+            <div className="h-32 bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse" />
+            <CardContent className="relative pt-0 pb-6">
+              <div className="flex flex-col md:flex-row gap-6 items-start md:items-end -mt-16 md:-mt-12">
+                <Skeleton className="h-32 w-32 rounded-full border-4 border-background" />
+                <div className="flex-1 space-y-3 md:mb-4">
+                  <Skeleton className="h-8 w-48" />
+                  <Skeleton className="h-4 w-64" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Form Card Skeleton */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-48" />
+              <Skeleton className="h-4 w-96 mt-2" />
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-3 w-64" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-11 w-full" />
+                <Skeleton className="h-3 w-64" />
+              </div>
+              <Skeleton className="h-10 w-32 ml-auto" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container py-6">
-      <ProfilePage
-        user={user}
-        addresses={addresses}
-        orders={orders}
-        reviews={reviews}
-        creating={creating}
-        updatingId={updatingId}
-        deletingId={deletingId}
-        onUpdateProfile={handleUpdateProfile}
-        onUploadAvatar={async (file) => {
-          // For demo only; replace with upload to storage
-          return URL.createObjectURL(file);
-        }}
-        onCreate={handleCreate}
-        onUpdate={handleUpdate}
-        onDelete={handleDelete}
-        onSetDefault={handleSetDefault}
+    <div className="container max-w-4xl mx-auto py-8">
+      <div className="mb-8 space-y-2 text-center">
+        <h1 className="text-4xl font-bold tracking-tight">Hồ sơ cá nhân</h1>
+        <p className="text-lg text-muted-foreground">
+          Quản lý thông tin tài khoản và cài đặt cá nhân của bạn
+        </p>
+      </div>
+      
+      <ProfileForm
+        defaultValues={user}
+        onSubmit={handleUpdateProfile}
+        saving={saving}
       />
     </div>
   );

@@ -18,7 +18,10 @@ export async function GET() {
 
 const UpdateProfileSchema = z.object({
   name: z.string().min(2).max(100).optional(),
-  avatarUrl: z.string().url().optional(),
+  avatarUrl: z.string().optional().refine(
+    (val) => !val || val === "" || val.startsWith("http://") || val.startsWith("https://") || val.startsWith("blob:") || val.startsWith("/"),
+    { message: "Avatar URL must be a valid URL or path" }
+  ),
   // phone is collected in UI but not persisted in schema; ignore here to respect current schema
 });
 

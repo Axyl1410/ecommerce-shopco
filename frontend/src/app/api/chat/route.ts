@@ -7,17 +7,22 @@ export const maxDuration = 30;
 export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
-  // Tìm context từ metadata của message mới nhất (message cuối cùng)
+  // Find context from metadata of the latest message (last message)
   let context: string | undefined;
   if (messages.length > 0) {
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage.metadata && typeof lastMessage.metadata === "object") {
-      const metadata = lastMessage.metadata as any;
-      context = metadata.context;
+    if (
+      lastMessage.metadata &&
+      typeof lastMessage.metadata === "object" &&
+      "context" in lastMessage.metadata &&
+      typeof (lastMessage.metadata as { context?: unknown }).context ===
+        "string"
+    ) {
+      context = (lastMessage.metadata as { context: string }).context;
     }
   }
 
-  // Tạo system message với context nếu có
+  // Create system message with context if available
   const systemMessage = context
     ? {
         role: "system" as const,
@@ -25,7 +30,7 @@ export async function POST(req: Request) {
       }
     : null;
 
-  // Kết hợp system message với messages
+  // Combine system message with messages
   const allMessages = systemMessage
     ? [systemMessage, ...convertToModelMessages(messages)]
     : convertToModelMessages(messages);

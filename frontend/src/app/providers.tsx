@@ -6,6 +6,7 @@ import type React from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { makeStore } from "../lib/store";
+import ChatWidget from "@/components/ai-elements/chat-widget";
 
 type Props = {
   children: React.ReactNode;
@@ -26,6 +27,7 @@ const Providers = ({ children }: Props) => {
       >
         <Toaster />
         {children}
+        <ChatWidget />
       </PersistGate>
     </Provider>
   );

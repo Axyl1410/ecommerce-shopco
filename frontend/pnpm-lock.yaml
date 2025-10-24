@@ -246,6 +246,9 @@ importers:
       shadcn:
         specifier: ^3.4.2
         version: 3.4.2(@types/node@20.19.22)(typescript@5.9.3)
+      shiki:
+        specifier: ^3.13.0
+        version: 3.13.0
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.18

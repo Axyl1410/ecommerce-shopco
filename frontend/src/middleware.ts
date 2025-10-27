@@ -10,7 +10,7 @@ const ROUTE_PERMISSIONS = {
   "/api/admin/users": ["admin"],
 } as const;
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });

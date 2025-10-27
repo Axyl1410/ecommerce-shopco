@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -8,9 +8,39 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
+import { useProductFilters } from "@/lib/hooks/useProducts";
+
+const sizeOptions = [
+  "XX-Small",
+  "X-Small",
+  "Small",
+  "Medium",
+  "Large",
+  "X-Large",
+  "XX-Large",
+  "3X-Large",
+  "4X-Large",
+];
 
 const SizeSection = () => {
-  const [selected, setSelected] = useState<string>("Large");
+  const { filters, updateSizes } = useProductFilters();
+  const [selectedSizes, setSelectedSizes] = useState<string[]>(
+    filters.sizes || []
+  );
+
+  // Sync with Redux state
+  useEffect(() => {
+    setSelectedSizes(filters.sizes || []);
+  }, [filters.sizes]);
+
+  const handleSizeToggle = (size: string) => {
+    const newSelected = selectedSizes.includes(size)
+      ? selectedSizes.filter((s) => s !== size)
+      : [...selectedSizes, size];
+
+    setSelectedSizes(newSelected);
+    updateSizes(newSelected);
+  };
 
   return (
     <Accordion type="single" collapsible defaultValue="filter-size">
@@ -20,25 +50,15 @@ const SizeSection = () => {
         </AccordionTrigger>
         <AccordionContent className="pt-4 pb-0">
           <div className="flex items-center flex-wrap">
-            {[
-              "XX-Small",
-              "X-Small",
-              "Small",
-              "Medium",
-              "Large",
-              "X-Large",
-              "XX-Large",
-              "3X-Large",
-              "4X-Large",
-            ].map((size, index) => (
+            {sizeOptions.map((size, index) => (
               <button
                 key={index}
                 type="button"
                 className={cn([
                   "bg-[#F0F0F0] m-1 flex items-center justify-center px-5 py-2.5 text-sm rounded-full max-h-[39px]",
-                  selected === size && "bg-black font-medium text-white",
+                  selectedSizes.includes(size) && "bg-black font-medium text-white",
                 ])}
-                onClick={() => setSelected(size)}
+                onClick={() => handleSizeToggle(size)}
               >
                 {size}
               </button>

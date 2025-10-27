@@ -1,5 +1,6 @@
-import Link from "next/link";
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import {
   Accordion,
@@ -7,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useProductFilters } from "@/lib/hooks/useProducts";
 
 type DressStyle = {
   title: string;
@@ -16,23 +18,42 @@ type DressStyle = {
 const dressStylesData: DressStyle[] = [
   {
     title: "Casual",
-    slug: "/shop?style=casual",
+    slug: "casual",
   },
   {
     title: "Formal",
-    slug: "/shop?style=formal",
+    slug: "formal",
   },
   {
     title: "Party",
-    slug: "/shop?style=party",
+    slug: "party",
   },
   {
     title: "Gym",
-    slug: "/shop?style=gym",
+    slug: "gym",
   },
 ];
 
 const DressStyleSection = () => {
+  const { filters, updateFilters } = useProductFilters();
+  const [selectedStyles, setSelectedStyles] = useState<string[]>(
+    filters.tags || []
+  );
+
+  // Sync with Redux state
+  useEffect(() => {
+    setSelectedStyles(filters.tags || []);
+  }, [filters.tags]);
+
+  const handleStyleToggle = (slug: string) => {
+    const newSelected = selectedStyles.includes(slug)
+      ? selectedStyles.filter((s) => s !== slug)
+      : [...selectedStyles, slug];
+
+    setSelectedStyles(newSelected);
+    updateFilters({ tags: newSelected });
+  };
+
   return (
     <Accordion type="single" collapsible defaultValue="filter-style">
       <AccordionItem value="filter-style" className="border-none">
@@ -42,13 +63,14 @@ const DressStyleSection = () => {
         <AccordionContent className="pb-0 pt-4">
           <div className="flex flex-col space-y-0.5 text-black/60">
             {dressStylesData.map((dStyle, idx) => (
-              <Link
+              <button
                 key={idx}
-                href={dStyle.slug as any}
-                className="flex items-center justify-between py-2"
+                onClick={() => handleStyleToggle(dStyle.slug)}
+                className={`flex items-center justify-between py-2 text-left hover:text-black transition-colors ${selectedStyles.includes(dStyle.slug) ? "text-black font-medium" : ""
+                  }`}
               >
                 {dStyle.title} <MdKeyboardArrowRight />
-              </Link>
+              </button>
             ))}
           </div>
         </AccordionContent>

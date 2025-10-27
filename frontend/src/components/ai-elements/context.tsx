@@ -1,6 +1,5 @@
 "use client";
 
-import type { ComponentProps } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,8 +7,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import type { AppUsage } from "@/lib/usage";
+import { AppUsage } from "@/lib/usage";
 import { cn } from "@/lib/utils";
+import type { ComponentProps } from "react";
 
 export type ContextProps = ComponentProps<"button"> & {
   /** Optional full usage payload to enable breakdown view */
@@ -114,7 +114,7 @@ export const Context = ({ className, usage, ...props }: ContextProps) => {
           className={cn(
             "inline-flex select-none items-center gap-1 rounded-md text-sm",
             "cursor-pointer bg-background text-foreground",
-            className
+            className,
           )}
           type="button"
           {...props}
@@ -172,7 +172,7 @@ export const Context = ({ className, usage, ...props }: ContextProps) => {
                     <span className="min-w-[4ch] text-right" />
                     <span>
                       {Number.isNaN(
-                        Number.parseFloat(usage.costUSD.totalUSD.toString())
+                        Number.parseFloat(usage.costUSD.totalUSD.toString()),
                       )
                         ? "—"
                         : `$${Number.parseFloat(usage.costUSD.totalUSD.toString()).toFixed(6)}`}

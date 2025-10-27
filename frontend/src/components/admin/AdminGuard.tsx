@@ -17,7 +17,7 @@ export async function AdminGuard({
   const isAdminUser = await hasRole("admin");
 
   if (!isAdminUser) {
-    redirect(fallbackUrl);
+    redirect(fallbackUrl as any);
   }
 
   return <>{children}</>;

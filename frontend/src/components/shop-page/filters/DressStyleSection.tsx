@@ -36,13 +36,17 @@ const DressStyleSection = () => {
   return (
     <Accordion type="single" collapsible defaultValue="filter-style">
       <AccordionItem value="filter-style" className="border-none">
-        <AccordionTrigger className="text-black font-bold text-xl hover:no-underline p-0 py-0.5">
+        <AccordionTrigger className="p-0 py-0.5 text-xl font-bold text-black hover:no-underline">
           Dress Style
         </AccordionTrigger>
-        <AccordionContent className="pt-4 pb-0">
-          <div className="flex flex-col text-black/60 space-y-0.5">
+        <AccordionContent className="pb-0 pt-4">
+          <div className="flex flex-col space-y-0.5 text-black/60">
             {dressStylesData.map((dStyle, idx) => (
-              <Link key={idx} href={dStyle.slug} className="flex items-center justify-between py-2">
+              <Link
+                key={idx}
+                href={dStyle.slug as any}
+                className="flex items-center justify-between py-2"
+              >
                 {dStyle.title} <MdKeyboardArrowRight />
               </Link>
             ))}

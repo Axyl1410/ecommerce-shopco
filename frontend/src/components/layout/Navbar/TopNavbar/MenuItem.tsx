@@ -1,11 +1,10 @@
-import Link from "next/link";
-import * as React from "react";
 import {
   NavigationMenuItem,
   NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 type MenuItemProps = {
   label: string;
@@ -15,8 +14,10 @@ type MenuItemProps = {
 export function MenuItem({ label, url }: MenuItemProps) {
   return (
     <NavigationMenuItem>
-      <Link href={url ?? "/"} legacyBehavior passHref>
-        <NavigationMenuLink className={cn([navigationMenuTriggerStyle(), "font-normal px-3"])}>
+      <Link href={url ?? ("/" as any)} legacyBehavior passHref>
+        <NavigationMenuLink
+          className={cn([navigationMenuTriggerStyle(), "px-3 font-normal"])}
+        >
           {label}
         </NavigationMenuLink>
       </Link>

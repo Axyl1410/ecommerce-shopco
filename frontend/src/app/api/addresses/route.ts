@@ -17,7 +17,8 @@ const AddressSchema = z.object({
 
 export async function GET() {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const addresses = await prisma.address.findMany({
     where: { userId: session.user.id },
@@ -28,16 +29,24 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json().catch(() => ({}));
   const parsed = AddressSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  if (!parsed.success)
+    return NextResponse.json(
+      { error: parsed.error.flatten() },
+      { status: 400 },
+    );
 
   const data = parsed.data;
 
   if (data.isDefault) {
-    await prisma.address.updateMany({ where: { userId: session.user.id }, data: { isDefault: false } });
+    await prisma.address.updateMany({
+      where: { userId: session.user.id },
+      data: { isDefault: false },
+    });
   }
 
   const created = await prisma.address.create({

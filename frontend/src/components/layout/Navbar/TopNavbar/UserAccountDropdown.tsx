@@ -14,7 +14,6 @@ import {
 import { User } from "@/types/user.types";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 
 interface UserAccountDropdownProps {
   isLoggedIn?: boolean;
@@ -82,7 +81,10 @@ const UserAccountDropdown = ({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/profile" className="flex cursor-pointer items-center">
+          <Link
+            href={"/profile" as any}
+            className="flex cursor-pointer items-center"
+          >
             <Image
               src="/icons/user.svg"
               alt="Profile"
@@ -94,7 +96,10 @@ const UserAccountDropdown = ({
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/orders" className="flex cursor-pointer items-center">
+          <Link
+            href={"/orders" as any}
+            className="flex cursor-pointer items-center"
+          >
             <Image
               src="/icons/order.svg"
               alt="Orders"
@@ -106,7 +111,10 @@ const UserAccountDropdown = ({
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/wishlist" className="flex cursor-pointer items-center">
+          <Link
+            href={"/wishlist" as any}
+            className="flex cursor-pointer items-center"
+          >
             <Image
               src="/icons/heart.svg"
               alt="Wishlist"
@@ -119,7 +127,10 @@ const UserAccountDropdown = ({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/settings" className="flex cursor-pointer items-center">
+          <Link
+            href={"/settings" as any}
+            className="flex cursor-pointer items-center"
+          >
             <Image
               src="/icons/settings.svg"
               alt="Settings"

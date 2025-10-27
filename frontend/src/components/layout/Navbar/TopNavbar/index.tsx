@@ -78,23 +78,23 @@ const TopNavbar = async () => {
   });
 
   return (
-    <nav className="sticky top-0 bg-white z-20">
-      <div className="flex relative max-w-frame mx-auto items-center justify-between md:justify-start py-5 md:py-6 px-4 xl:px-0">
+    <nav className="sticky top-0 z-20 bg-white">
+      <div className="relative mx-auto flex max-w-frame items-center justify-between px-4 py-5 md:justify-start md:py-6 xl:px-0">
         <div className="flex items-center">
-          <div className="block md:hidden mr-4">
+          <div className="mr-4 block md:hidden">
             <ResTopNavbar data={data} />
           </div>
           <Link
             href="/"
             className={cn([
               integralCF.className,
-              "text-2xl lg:text-[32px] mb-2 mr-3 lg:mr-10",
+              "mb-2 mr-3 text-2xl lg:mr-10 lg:text-[32px]",
             ])}
           >
             SHOP.CO
           </Link>
         </div>
-        <NavigationMenu className="hidden md:flex mr-2 lg:mr-7">
+        <NavigationMenu className="mr-2 hidden md:flex lg:mr-7">
           <NavigationMenuList>
             {data.map((item) => (
               <React.Fragment key={item.id}>
@@ -108,7 +108,7 @@ const TopNavbar = async () => {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-        <InputGroup className="hidden md:flex bg-[#F0F0F0] mr-3 lg:mr-10">
+        <InputGroup className="mr-3 hidden bg-[#F0F0F0] md:flex lg:mr-10">
           <InputGroup.Text>
             <Image
               priority
@@ -116,7 +116,7 @@ const TopNavbar = async () => {
               height={20}
               width={20}
               alt="search"
-              className="min-w-5 min-h-5"
+              className="min-h-5 min-w-5"
             />
           </InputGroup.Text>
           <InputGroup.Input
@@ -128,8 +128,8 @@ const TopNavbar = async () => {
         </InputGroup>
         <div className="flex items-center space-x-2">
           <Link
-            href="/search"
-            className="block md:hidden p-1 transition-all duration-200 hover:scale-105 hover:opacity-80"
+            href={"/search" as any}
+            className="block p-1 transition-all duration-200 hover:scale-105 hover:opacity-80 md:hidden"
           >
             <Image
               priority
@@ -137,7 +137,7 @@ const TopNavbar = async () => {
               height={100}
               width={100}
               alt="Search products"
-              className="max-w-[22px] max-h-[22px]"
+              className="max-h-[22px] max-w-[22px]"
             />
           </Link>
           <CartBtn />

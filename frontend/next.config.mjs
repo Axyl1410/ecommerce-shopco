@@ -8,7 +8,7 @@ const nextConfig = {
       },
     ],
   },
-  //   typedRoutes: true,
+  typedRoutes: false,
 };
 
 export default nextConfig;

@@ -1,5 +1,3 @@
-import Link from "next/link";
-import * as React from "react";
 import {
   NavigationMenuContent,
   NavigationMenuItem,
@@ -7,6 +5,8 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import * as React from "react";
 import type { MenuListData } from "../navbar.types";
 
 export type MenuListProps = {
@@ -17,11 +17,17 @@ export type MenuListProps = {
 export function MenuList({ data, label }: MenuListProps) {
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger className="font-normal px-3">{label}</NavigationMenuTrigger>
+      <NavigationMenuTrigger className="px-3 font-normal">
+        {label}
+      </NavigationMenuTrigger>
       <NavigationMenuContent>
-        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
           {data.map((item) => (
-            <ListItem key={item.id} title={item.label} href={item.url ?? "/"}>
+            <ListItem
+              key={item.id}
+              title={item.label}
+              href={item.url ?? ("/" as any)}
+            >
               {item.description ?? ""}
             </ListItem>
           ))}
@@ -47,7 +53,9 @@ const ListItem = React.forwardRef<
           {...props}
         >
           <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
         </Link>
       </NavigationMenuLink>
     </li>

@@ -32,7 +32,7 @@ export default function LogoutButton({
         toast.error(error.message || "Failed to sign out");
       } else {
         toast.success("Signed out");
-        router.push(redirectTo);
+        router.push(redirectTo as any);
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to sign out";

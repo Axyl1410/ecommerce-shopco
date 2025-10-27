@@ -2,7 +2,7 @@ import { EmailService } from "@/services/email.service";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import { admin, haveIBeenPwned, openAPI } from "better-auth/plugins";
+import { admin } from "better-auth/plugins";
 import { prisma } from "./prisma";
 import { assertValue } from "./utils";
 
@@ -81,10 +81,6 @@ export const auth = betterAuth({
     admin({
       //todo add admin user ids
       adminUserIds: ["fLN6DoGcLUWiYOWuLQgktIrVD5euLpZk"],
-    }),
-    openAPI(),
-    haveIBeenPwned({
-      customPasswordCompromisedMessage: "Please choose a more secure password.",
     }),
   ],
 });

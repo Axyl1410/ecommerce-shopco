@@ -131,6 +131,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={(v) => field.onChange(Boolean(v))}
+                      tabIndex={-1}
                     />
                   </FormControl>
                   <FormLabel>Remember me</FormLabel>
@@ -140,6 +141,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             <Link
               href="/reset-password"
               className="text-sm text-primary underline underline-offset-4 hover:text-primary/80"
+              tabIndex={-1}
             >
               Forgot password?
             </Link>

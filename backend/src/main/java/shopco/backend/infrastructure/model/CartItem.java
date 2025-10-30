@@ -18,27 +18,27 @@ public class CartItem {
     @Id
     private String id;
     
-    @Column(name = "cart_id", nullable = false)
+    @Column(name = "cartId", nullable = false)
     private String cartId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", insertable = false, updatable = false)
+    @JoinColumn(name = "cartId", insertable = false, updatable = false)
     private Cart cart;
     
-    @Column(name = "variant_id", nullable = false)
+    @Column(name = "variantId", nullable = false)
     private String variantId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "variant_id", insertable = false, updatable = false)
+    @JoinColumn(name = "variantId", insertable = false, updatable = false)
     private ProductVariant variant;
     
     @Column(nullable = false)
     private Integer quantity;
     
-    @Column(name = "price_at_add", nullable = false, precision = 12, scale = 2)
+    @Column(name = "priceAtAdd", nullable = false, precision = 12, scale = 2)
     private BigDecimal priceAtAdd;
     
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }

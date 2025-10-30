@@ -15,27 +15,27 @@ public class OrderItem {
 
   @Id private String id;
 
-  @Column(name = "order_id", nullable = false)
+  @Column(name = "orderId", nullable = false)
   private String orderId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "order_id", insertable = false, updatable = false)
+  @JoinColumn(name = "orderId", insertable = false, updatable = false)
   private Order order;
 
-  @Column(name = "variant_id", nullable = false)
+  @Column(name = "variantId", nullable = false)
   private String variantId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "variant_id", insertable = false, updatable = false)
+  @JoinColumn(name = "variantId", insertable = false, updatable = false)
   private ProductVariant variant;
 
-  @Column(name = "product_name", nullable = false)
+  @Column(name = "productName", nullable = false)
   private String productName;
 
-  @Column(name = "variant_attributes", columnDefinition = "JSON")
+  @Column(name = "variantAttributes", columnDefinition = "JSON")
   private String variantAttributes; // JSON string
 
-  @Column(name = "unit_price", nullable = false, precision = 12, scale = 2)
+  @Column(name = "unitPrice", nullable = false, precision = 12, scale = 2)
   private BigDecimal unitPrice;
 
   @Column(nullable = false)

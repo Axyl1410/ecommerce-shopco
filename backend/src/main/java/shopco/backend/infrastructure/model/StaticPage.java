@@ -30,17 +30,17 @@ public class StaticPage {
     @Column(nullable = false)
     private Boolean active = true;
     
-    @Column(name = "seo_title")
+    @Column(name = "seoTitle")
     private String seoTitle;
     
-    @Column(name = "seo_desc")
+    @Column(name = "seoDesc")
     private String seoDesc;
     
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
 }

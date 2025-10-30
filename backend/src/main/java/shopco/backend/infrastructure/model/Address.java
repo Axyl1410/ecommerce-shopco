@@ -26,11 +26,11 @@ public class Address {
     @Id
     private String id;
     
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "userId", nullable = false)
     private String userId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "userId", insertable = false, updatable = false)
     private User user;
     
     @Column(nullable = false)
@@ -39,7 +39,7 @@ public class Address {
     @Column(nullable = false)
     private String phone;
     
-    @Column(name = "address_line", nullable = false)
+    @Column(name = "addressLine", nullable = false)
     private String addressLine;
     
     @Column(nullable = false)
@@ -51,17 +51,17 @@ public class Address {
     @Column(nullable = false)
     private String province;
     
-    @Column(name = "postal_code")
+    @Column(name = "postalCode")
     private String postalCode;
     
-    @Column(name = "is_default", nullable = false)
+    @Column(name = "isDefault", nullable = false)
     private Boolean isDefault = false;
     
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
 }

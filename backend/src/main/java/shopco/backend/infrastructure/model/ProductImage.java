@@ -14,26 +14,26 @@ public class ProductImage {
 
   @Id private String id;
 
-  @Column(name = "product_id", nullable = false)
+  @Column(name = "productId", nullable = false)
   private String productId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "product_id", insertable = false, updatable = false)
+  @JoinColumn(name = "productId", insertable = false, updatable = false)
   private Product product;
 
-  @Column(name = "variant_id")
+  @Column(name = "variantId")
   private String variantId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "variant_id", insertable = false, updatable = false)
+  @JoinColumn(name = "variantId", insertable = false, updatable = false)
   private ProductVariant variant;
 
   @Column(nullable = false)
   private String url;
 
-  @Column(name = "alt_text")
+  @Column(name = "altText")
   private String altText;
 
-  @Column(name = "sort_order")
+  @Column(name = "sortOrder")
   private Integer sortOrder = 0;
 }

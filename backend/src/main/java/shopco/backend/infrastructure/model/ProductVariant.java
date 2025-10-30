@@ -25,11 +25,11 @@ public class ProductVariant {
     @Id
     private String id;
     
-    @Column(name = "product_id", nullable = false)
+    @Column(name = "productId", nullable = false)
     private String productId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
+    @JoinColumn(name = "productId", insertable = false, updatable = false)
     private Product product;
     
     @Column(unique = true)
@@ -41,10 +41,10 @@ public class ProductVariant {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
     
-    @Column(name = "sale_price", precision = 12, scale = 2)
+    @Column(name = "salePrice", precision = 12, scale = 2)
     private BigDecimal salePrice;
     
-    @Column(name = "stock_quantity", nullable = false)
+    @Column(name = "stockQuantity", nullable = false)
     private Integer stockQuantity = 0;
     
     private Float weight;

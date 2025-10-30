@@ -23,19 +23,19 @@ import lombok.NoArgsConstructor;
 public class ProductTag {
 
   @Id
-  @Column(name = "product_id", nullable = false)
+  @Column(name = "productId", nullable = false)
   private String productId;
 
   @Id
-  @Column(name = "tag_id", nullable = false)
+  @Column(name = "tagId", nullable = false)
   private String tagId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "product_id", insertable = false, updatable = false)
+  @JoinColumn(name = "productId", insertable = false, updatable = false)
   private Product product;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "tag_id", insertable = false, updatable = false)
+  @JoinColumn(name = "tagId", insertable = false, updatable = false)
   private Tag tag;
 
   @Data

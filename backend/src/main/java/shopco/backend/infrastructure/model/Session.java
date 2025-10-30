@@ -17,33 +17,33 @@ public class Session {
 
   @Id private String id;
 
-  @Column(name = "expires_at", nullable = false)
+  @Column(name = "expiresAt", nullable = false)
   private LocalDateTime expiresAt;
 
   @Column(nullable = false, unique = true)
   private String token;
 
   @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
+  @Column(name = "createdAt", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @UpdateTimestamp
-  @Column(name = "updated_at", nullable = false)
+  @Column(name = "updatedAt", nullable = false)
   private LocalDateTime updatedAt;
 
-  @Column(name = "ip_address")
+  @Column(name = "ipAddress")
   private String ipAddress;
 
-  @Column(name = "user_agent")
+  @Column(name = "userAgent")
   private String userAgent;
 
-  @Column(name = "user_id", nullable = false)
+  @Column(name = "userId", nullable = false)
   private String userId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", insertable = false, updatable = false)
+  @JoinColumn(name = "userId", insertable = false, updatable = false)
   private User user;
 
-  @Column(name = "impersonated_by")
+  @Column(name = "impersonatedBy")
   private String impersonatedBy;
 }

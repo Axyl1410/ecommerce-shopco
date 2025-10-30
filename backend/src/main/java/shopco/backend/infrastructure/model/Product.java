@@ -40,27 +40,27 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
     
-    @Column(name = "brand_id")
+    @Column(name = "brandId")
     private String brandId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brand_id", insertable = false, updatable = false)
+    @JoinColumn(name = "brandId", insertable = false, updatable = false)
     private Brand brand;
     
-    @Column(name = "category_id")
+    @Column(name = "categoryId")
     private String categoryId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", insertable = false, updatable = false)
+    @JoinColumn(name = "categoryId", insertable = false, updatable = false)
     private Category category;
     
-    @Column(name = "default_image")
+    @Column(name = "defaultImage")
     private String defaultImage;
     
-    @Column(name = "seo_meta_title")
+    @Column(name = "seoMetaTitle")
     private String seoMetaTitle;
     
-    @Column(name = "seo_meta_desc")
+    @Column(name = "seoMetaDesc")
     private String seoMetaDesc;
     
     @Enumerated(EnumType.STRING)
@@ -68,11 +68,11 @@ public class Product {
     private ProductStatus status = ProductStatus.DRAFT;
     
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
     
     // Relationships

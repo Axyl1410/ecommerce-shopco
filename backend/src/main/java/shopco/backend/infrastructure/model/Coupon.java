@@ -43,30 +43,30 @@ public class Coupon {
     private String description;
     
     // 1. Điều kiện sử dụng
-    @Column(name = "min_order_amount", precision = 12, scale = 2)
+    @Column(name = "minOrderAmount", precision = 12, scale = 2)
     private BigDecimal minOrderAmount;
     
-    @Column(name = "starts_at", nullable = false)
+    @Column(name = "startsAt", nullable = false)
     private LocalDateTime startsAt;
     
-    @Column(name = "ends_at", nullable = false)
+    @Column(name = "endsAt", nullable = false)
     private LocalDateTime endsAt;
     
     // 2. Giới hạn sử dụng
-    @Column(name = "usage_limit")
+    @Column(name = "usageLimit")
     private Integer usageLimit;
     
-    @Column(name = "used_count", nullable = false)
+    @Column(name = "usedCount", nullable = false)
     private Integer usedCount = 0;
     
-    @Column(name = "usage_limit_per_user")
+    @Column(name = "usageLimitPerUser")
     private Integer usageLimitPerUser = 1;
     
     @Column(nullable = false)
     private Boolean active = true;
     
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     // --- MỚI: Giới hạn phạm vi áp dụng ---

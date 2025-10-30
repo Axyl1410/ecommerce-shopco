@@ -18,22 +18,22 @@ public class Cart {
 
   @Id private String id;
 
-  @Column(name = "user_id", unique = true)
+  @Column(name = "userId", unique = true)
   private String userId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", insertable = false, updatable = false)
+  @JoinColumn(name = "userId", insertable = false, updatable = false)
   private User user;
 
-  @Column(name = "session_id", unique = true)
+  @Column(name = "sessionId", unique = true)
   private String sessionId;
 
   @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
+  @Column(name = "createdAt", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @UpdateTimestamp
-  @Column(name = "updated_at", nullable = false)
+  @Column(name = "updatedAt", nullable = false)
   private LocalDateTime updatedAt;
 
   // Relationships

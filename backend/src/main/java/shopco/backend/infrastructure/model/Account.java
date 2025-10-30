@@ -18,42 +18,42 @@ public class Account {
     @Id
     private String id;
     
-    @Column(name = "account_id", nullable = false)
+    @Column(name = "accountId", nullable = false)
     private String accountId;
     
-    @Column(name = "provider_id", nullable = false)
+    @Column(name = "providerId", nullable = false)
     private String providerId;
     
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "userId", nullable = false)
     private String userId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "userId", insertable = false, updatable = false)
     private User user;
     
-    @Column(name = "access_token")
+    @Column(name = "accessToken")
     private String accessToken;
     
-    @Column(name = "refresh_token")
+    @Column(name = "refreshToken")
     private String refreshToken;
     
-    @Column(name = "id_token")
+    @Column(name = "idToken")
     private String idToken;
     
-    @Column(name = "access_token_expires_at")
+    @Column(name = "accessTokenExpiresAt")
     private LocalDateTime accessTokenExpiresAt;
     
-    @Column(name = "refresh_token_expires_at")
+    @Column(name = "refreshTokenExpiresAt")
     private LocalDateTime refreshTokenExpiresAt;
     
     private String scope;
     private String password;
     
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
 }

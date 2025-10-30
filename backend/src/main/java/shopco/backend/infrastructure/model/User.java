@@ -25,17 +25,17 @@ public class User {
   @Column(nullable = false, unique = true)
   private String email;
 
-  @Column(name = "email_verified", nullable = false)
+  @Column(name = "emailVerified", nullable = false)
   private Boolean emailVerified = false;
 
   private String image;
 
   @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
+  @Column(name = "createdAt", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @UpdateTimestamp
-  @Column(name = "updated_at", nullable = false)
+  @Column(name = "updatedAt", nullable = false)
   private LocalDateTime updatedAt;
 
   // Better Auth fields

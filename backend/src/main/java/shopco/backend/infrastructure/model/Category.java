@@ -36,32 +36,32 @@ public class Category {
     @Column(columnDefinition = "TEXT")
     private String description;
     
-    @Column(name = "image_url")
+    @Column(name = "imageUrl")
     private String imageUrl;
     
     // Self-referencing for hierarchy
-    @Column(name = "parent_id")
+    @Column(name = "parentId")
     private String parentId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+    @JoinColumn(name = "parentId", insertable = false, updatable = false)
     private Category parent;
     
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Category> children;
     
-    @Column(name = "sort_order")
+    @Column(name = "sortOrder")
     private Integer sortOrder = 0;
     
     @Column(nullable = false)
     private Boolean active = true;
     
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
     
     // Relationships

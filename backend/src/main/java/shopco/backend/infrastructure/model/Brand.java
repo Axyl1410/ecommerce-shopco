@@ -28,18 +28,18 @@ public class Brand {
     @Column(columnDefinition = "TEXT")
     private String description;
     
-    @Column(name = "logo_url")
+    @Column(name = "logoUrl")
     private String logoUrl;
     
     @Column(nullable = false)
     private Boolean active = true;
     
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
     
     // Relationships

@@ -23,19 +23,19 @@ import lombok.NoArgsConstructor;
 public class CouponApplicableCategory {
 
   @Id
-  @Column(name = "coupon_id", nullable = false)
+  @Column(name = "couponId", nullable = false)
   private String couponId;
 
   @Id
-  @Column(name = "category_id", nullable = false)
+  @Column(name = "categoryId", nullable = false)
   private String categoryId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "coupon_id", insertable = false, updatable = false)
+  @JoinColumn(name = "couponId", insertable = false, updatable = false)
   private Coupon coupon;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "category_id", insertable = false, updatable = false)
+  @JoinColumn(name = "categoryId", insertable = false, updatable = false)
   private Category category;
 
   @Data

@@ -4,164 +4,68 @@ import java.time.LocalDateTime;
 
 public class UserEntity {
     private String id;
+    private String name;
     private String email;
-    private String firstName;
-    private String lastName;
-    private String password;
-    private String role;
-    private LocalDateTime emailVerifiedAt;
+    private Boolean emailVerified;
+    private String image;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String phoneNumber;
-    private Boolean active;
-    private LocalDateTime lastLoginAt;
-    private String imageUrl;
-    private String gender;
-    private LocalDateTime birthday;
 
-    public UserEntity(String id, String email, String firstName, String lastName,
-            String password, String role, LocalDateTime emailVerifiedAt,
-            LocalDateTime createdAt, LocalDateTime updatedAt, String phoneNumber,
-            Boolean active, LocalDateTime lastLoginAt, String imageUrl,
-            String gender, LocalDateTime birthday) {
+    // Better Auth fields (optional per schema)
+    private String role;        // nullable
+    private Boolean banned;     // default false
+    private String banReason;   // nullable
+    private LocalDateTime banExpires; // nullable
+
+    public UserEntity(String id, String name, String email, Boolean emailVerified,
+            String image, LocalDateTime createdAt, LocalDateTime updatedAt,
+            String role, Boolean banned, String banReason, LocalDateTime banExpires) {
         this.id = id;
+        this.name = name;
         this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-        this.role = role;
-        this.emailVerifiedAt = emailVerifiedAt;
+        this.emailVerified = emailVerified;
+        this.image = image;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.phoneNumber = phoneNumber;
-        this.active = active;
-        this.lastLoginAt = lastLoginAt;
-        this.imageUrl = imageUrl;
-        this.gender = gender;
-        this.birthday = birthday;
+        this.role = role;
+        this.banned = banned;
+        this.banReason = banReason;
+        this.banExpires = banExpires;
     }
 
-    public UserEntity() {
-    }
+    public UserEntity() {}
 
     // Getters and Setters
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public Boolean getEmailVerified() { return emailVerified; }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
 
-    public String getFirstName() {
-        return firstName;
-    }
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public String getLastName() {
-        return lastName;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public String getPassword() {
-        return password;
-    }
+    public Boolean getBanned() { return banned; }
+    public void setBanned(Boolean banned) { this.banned = banned; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getBanReason() { return banReason; }
+    public void setBanReason(String banReason) { this.banReason = banReason; }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public LocalDateTime getEmailVerifiedAt() {
-        return emailVerifiedAt;
-    }
-
-    public void setEmailVerifiedAt(LocalDateTime emailVerifiedAt) {
-        this.emailVerifiedAt = emailVerifiedAt;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public LocalDateTime getLastLoginAt() {
-        return lastLoginAt;
-    }
-
-    public void setLastLoginAt(LocalDateTime lastLoginAt) {
-        this.lastLoginAt = lastLoginAt;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public LocalDateTime getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(LocalDateTime birthday) {
-        this.birthday = birthday;
-    }
+    public LocalDateTime getBanExpires() { return banExpires; }
+    public void setBanExpires(LocalDateTime banExpires) { this.banExpires = banExpires; }
 }

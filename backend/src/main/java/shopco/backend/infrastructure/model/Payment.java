@@ -15,13 +15,14 @@ import org.hibernate.annotations.CreationTimestamp;
 @AllArgsConstructor
 public class Payment {
 
-  @Id private String id;
+  @Id
+  private String id;
 
-  @Column(name = "order_id", nullable = false)
+  @Column(name = "orderId", nullable = false)
   private String orderId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "order_id", insertable = false, updatable = false)
+  @JoinColumn(name = "orderId", insertable = false, updatable = false)
   private Order order;
 
   @Column(nullable = false)
@@ -33,13 +34,13 @@ public class Payment {
   @Column(nullable = false, precision = 12, scale = 2)
   private BigDecimal amount;
 
-  @Column(name = "provider_txn_id")
+  @Column(name = "providerTxnId")
   private String providerTxnId;
 
   @Column(columnDefinition = "JSON")
   private String metadata; // JSON string
 
   @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
+  @Column(name = "createdAt", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 }

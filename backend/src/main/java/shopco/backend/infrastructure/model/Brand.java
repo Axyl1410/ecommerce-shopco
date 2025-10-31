@@ -15,33 +15,33 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Brand {
-    
+
     @Id
     private String id;
-    
+
     @Column(nullable = false)
     private String name;
-    
+
     @Column(nullable = false, unique = true)
     private String slug;
-    
+
     @Column(columnDefinition = "TEXT")
     private String description;
-    
-    @Column(name = "logo_url")
+
+    @Column(name = "logoUrl")
     private String logoUrl;
-    
+
     @Column(nullable = false)
     private Boolean active = true;
-    
+
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    
+
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
-    
+
     // Relationships
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products;

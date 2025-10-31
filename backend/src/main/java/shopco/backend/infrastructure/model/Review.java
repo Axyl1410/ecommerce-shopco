@@ -16,27 +16,28 @@ import org.hibernate.annotations.CreationTimestamp;
 @AllArgsConstructor
 public class Review {
 
-  @Id private String id;
+  @Id
+  private String id;
 
-  @Column(name = "product_id", nullable = false)
+  @Column(name = "productId", nullable = false)
   private String productId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "product_id", insertable = false, updatable = false)
+  @JoinColumn(name = "productId", insertable = false, updatable = false)
   private Product product;
 
-  @Column(name = "user_id", nullable = false)
+  @Column(name = "userId", nullable = false)
   private String userId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", insertable = false, updatable = false)
+  @JoinColumn(name = "userId", insertable = false, updatable = false)
   private User user;
 
-  @Column(name = "order_item_id", unique = true)
+  @Column(name = "orderItemId", unique = true)
   private String orderItemId;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "order_item_id", insertable = false, updatable = false)
+  @JoinColumn(name = "orderItemId", insertable = false, updatable = false)
   private OrderItem orderItem;
 
   @Column(nullable = false)
@@ -52,6 +53,6 @@ public class Review {
   private ReviewStatus status = ReviewStatus.PENDING;
 
   @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
+  @Column(name = "createdAt", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 }

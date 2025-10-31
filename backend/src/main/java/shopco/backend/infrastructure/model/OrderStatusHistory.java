@@ -16,13 +16,14 @@ import org.hibernate.annotations.CreationTimestamp;
 @AllArgsConstructor
 public class OrderStatusHistory {
 
-  @Id private String id;
+  @Id
+  private String id;
 
-  @Column(name = "order_id", nullable = false)
+  @Column(name = "orderId", nullable = false)
   private String orderId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "order_id", insertable = false, updatable = false)
+  @JoinColumn(name = "orderId", insertable = false, updatable = false)
   private Order order;
 
   @Enumerated(EnumType.STRING)
@@ -32,10 +33,10 @@ public class OrderStatusHistory {
   @Column(columnDefinition = "TEXT")
   private String notes;
 
-  @Column(name = "changed_by")
+  @Column(name = "changedBy")
   private String changedBy;
 
   @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
+  @Column(name = "createdAt", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 }

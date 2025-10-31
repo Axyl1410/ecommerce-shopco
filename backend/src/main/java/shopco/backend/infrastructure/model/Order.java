@@ -29,84 +29,83 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
-    
+
     @Id
     private String id;
-    
-    @Column(name = "order_no", nullable = false, unique = true)
+
+    @Column(name = "orderNo", nullable = false, unique = true)
     private String orderNo;
-    
-    @Column(name = "user_id", nullable = false)
+
+    @Column(name = "userId", nullable = false)
     private String userId;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "userId", insertable = false, updatable = false)
     private User user;
-    
-    @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
+
+    @Column(name = "totalAmount", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
-    
-    @Column(name = "shipping_fee", nullable = false, precision = 12, scale = 2)
+
+    @Column(name = "shippingFee", nullable = false, precision = 12, scale = 2)
     private BigDecimal shippingFee = BigDecimal.ZERO;
-    
-    @Column(name = "discount_amount", nullable = false, precision = 12, scale = 2)
+
+    @Column(name = "discountAmount", nullable = false, precision = 12, scale = 2)
     private BigDecimal discountAmount = BigDecimal.ZERO;
-    
-    @Column(name = "final_amount", nullable = false, precision = 12, scale = 2)
+
+    @Column(name = "finalAmount", nullable = false, precision = 12, scale = 2)
     private BigDecimal finalAmount;
-    
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "pay_status", nullable = false)
+    @Column(name = "payStatus", nullable = false)
     private PaymentStatus payStatus = PaymentStatus.PENDING;
-    
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_status", nullable = false)
+    @Column(name = "orderStatus", nullable = false)
     private OrderStatus orderStatus = OrderStatus.PENDING;
-    
-    @Column(name = "payment_method")
+
+    @Column(name = "paymentMethod")
     private String paymentMethod;
-    
-    @Column(name = "shipping_address", columnDefinition = "JSON")
+
+    @Column(name = "shippingAddress", columnDefinition = "JSON")
     private String shippingAddress; // JSON string
-    
+
     @Column(columnDefinition = "TEXT")
     private String notes;
-    
-    @Column(name = "admin_notes", columnDefinition = "TEXT")
+
+    @Column(name = "adminNotes", columnDefinition = "TEXT")
     private String adminNotes;
-    
-    @Column(name = "tracking_number")
+
+    @Column(name = "trackingNumber")
     private String trackingNumber;
-    
+
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    
+
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
-    
+
     // Relationships
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> items;
-    
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Payment> payments;
-    
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderStatusHistory> statusHistory;
-    
+
     // --- MỚI: Thêm liên kết Coupon ---
-    @Column(name = "coupon_id")
+    @Column(name = "couponId")
     private String couponId;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_id", insertable = false, updatable = false)
+    @JoinColumn(name = "couponId", insertable = false, updatable = false)
     private Coupon coupon;
-    
+
     // --- CẬP NHẬT: Thêm trường để lưu mã coupon đã áp dụng ---
     // (Rất quan trọng để tra cứu sau này, ngay cả khi coupon gốc bị thay đổi/xóa)
-    @Column(name = "applied_coupon_code")
+    @Column(name = "appliedCouponCode")
     private String appliedCouponCode;
 }
-

@@ -14,13 +14,14 @@ import org.hibernate.annotations.CreationTimestamp;
 @AllArgsConstructor
 public class AuditLog {
 
-  @Id private String id;
+  @Id
+  private String id;
 
-  @Column(name = "user_id")
+  @Column(name = "userId")
   private String userId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", insertable = false, updatable = false)
+  @JoinColumn(name = "userId", insertable = false, updatable = false)
   private User user;
 
   @Column(nullable = false)
@@ -29,7 +30,7 @@ public class AuditLog {
   @Column(nullable = false)
   private String entity;
 
-  @Column(name = "entity_id")
+  @Column(name = "entityId")
   private String entityId;
 
   @Column(columnDefinition = "TEXT", nullable = false)
@@ -39,6 +40,6 @@ public class AuditLog {
   private String metadata; // JSON string
 
   @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
+  @Column(name = "createdAt", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 }

@@ -14,33 +14,33 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Banner {
-    
+
     @Id
     private String id;
-    
+
     @Column(nullable = false)
     private String title;
-    
-    @Column(name = "image_url", nullable = false)
+
+    @Column(name = "imageUrl", nullable = false)
     private String imageUrl;
-    
-    @Column(name = "link_url")
+
+    @Column(name = "linkUrl")
     private String linkUrl;
-    
+
     @Column(nullable = false)
     private String position;
-    
-    @Column(name = "sort_order", nullable = false)
+
+    @Column(name = "sortOrder", nullable = false)
     private Integer sortOrder = 0;
-    
+
     @Column(nullable = false)
     private Boolean active = true;
-    
+
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    
+
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
 }

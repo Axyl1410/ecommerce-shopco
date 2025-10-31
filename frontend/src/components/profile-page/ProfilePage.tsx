@@ -22,7 +22,7 @@ export default function ProfilePage(props: ProfilePageProps) {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-6 space-y-10">
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Hồ sơ</h2>
+        <h2 className="text-xl font-semibold">Profile</h2>
         <ProfileForm
           defaultValues={props.user}
           onSubmit={props.onUpdateProfile}
@@ -31,7 +31,7 @@ export default function ProfilePage(props: ProfilePageProps) {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Địa chỉ</h2>
+        <h2 className="text-xl font-semibold">Addresses</h2>
         <AddressBook
           addresses={props.addresses}
           onCreate={props.onCreate}
@@ -45,7 +45,7 @@ export default function ProfilePage(props: ProfilePageProps) {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Hoạt động</h2>
+        <h2 className="text-xl font-semibold">Activity</h2>
         <ActivityHistory orders={props.orders} reviews={props.reviews} />
       </section>
     </div>

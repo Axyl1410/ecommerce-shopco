@@ -26,9 +26,9 @@ export type ProfileFormValues = z.infer<typeof profileSchema>;
 const profileSchema = z.object({
   name: z
     .string()
-    .min(2, "Tên phải có ít nhất 2 ký tự")
-    .max(100, "Tên quá dài"),
-  email: z.string().email("Email không hợp lệ"),
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name is too long"),
+  email: z.string().email("Invalid email"),
   avatarUrl: z.string().url().optional().or(z.literal("")),
 });
 
@@ -75,11 +75,11 @@ export function ProfileForm({
     const MAX_SIZE = 2 * 1024 * 1024; // 2MB
     const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
     if (!ALLOWED.includes(file.type)) {
-      toast({ title: "Ảnh không hợp lệ", description: "Chỉ hỗ trợ JPG/PNG/WEBP" });
+      toast({ title: "Invalid image", description: "Only JPG/PNG/WEBP are supported" });
       return;
     }
     if (file.size > MAX_SIZE) {
-      toast({ title: "Ảnh quá lớn", description: "Kích thước tối đa 2MB" });
+      toast({ title: "File too large", description: "Maximum size is 2MB" });
       return;
     }
     const url = await onAvatarUpload(file);
@@ -90,8 +90,8 @@ export function ProfileForm({
     <Card className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Hồ sơ người dùng</h2>
-          <p className="text-sm text-muted-foreground">Cập nhật tên hiển thị, email và ảnh đại diện</p>
+          <h2 className="text-xl font-semibold">User Profile</h2>
+          <p className="text-sm text-muted-foreground">Update display name, email, and avatar</p>
         </div>
       </div>
 
@@ -106,7 +106,7 @@ export function ProfileForm({
             </AvatarFallback>
           </Avatar>
           <Input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFileChange} />
-          <p className="text-xs text-muted-foreground">JPG/PNG/WEBP • Tối đa 2MB</p>
+          <p className="text-xs text-muted-foreground">JPG/PNG/WEBP • Max 2MB</p>
         </div>
 
         <div className="flex-1">
@@ -120,9 +120,9 @@ export function ProfileForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Họ và tên</FormLabel>
+                    <FormLabel>Full name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nguyễn Văn A" {...field} />
+                      <Input placeholder="John Doe" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -139,7 +139,7 @@ export function ProfileForm({
                       <Input type="email" disabled {...field} />
                     </FormControl>
                     <FormDescription>
-                      Email dùng để đăng nhập, không thể thay đổi.
+                      Login email; cannot be changed.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -154,10 +154,10 @@ export function ProfileForm({
                   variant="outline"
                   onClick={() => form.reset()}
                 >
-                  Hủy
+                  Reset
                 </Button>
                 <Button type="submit" disabled={saving}>
-                  {saving ? "Đang lưu..." : "Lưu thay đổi"}
+                  {saving ? "Saving..." : "Save changes"}
                 </Button>
               </div>
             </form>

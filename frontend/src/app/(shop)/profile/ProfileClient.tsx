@@ -28,10 +28,10 @@ export default function ProfileClient({ initialUser, initialAddresses, initialOr
   const handleUpdateProfile = useCallback(async (values: any) => {
     try {
       await profileService.updateProfile({ name: values.name, avatarUrl: values.avatarUrl });
-      toast({ title: "Đã lưu", description: "Hồ sơ đã được cập nhật" });
+      toast({ title: "Saved", description: "Your profile has been updated." });
     } catch (e: any) {
       console.error(e);
-      toast({ title: "Lỗi", description: e.message || "Không thể cập nhật hồ sơ" });
+      toast({ title: "Error", description: e.message || "Could not update profile" });
     }
   }, []);
 
@@ -40,11 +40,11 @@ export default function ProfileClient({ initialUser, initialAddresses, initialOr
       setCreating(true);
       const created = await profileService.createAddress(payload);
       setAddresses((prev) => [created, ...prev.map(a => payload.isDefault ? { ...a, isDefault: false } : a)]);
-      toast({ title: "Thành công", description: "Đã thêm địa chỉ" });
+      toast({ title: "Success", description: "Address added." });
       return created;
     } catch (e: any) {
       console.error(e);
-      toast({ title: "Lỗi", description: e.message || "Không thể thêm địa chỉ" });
+      toast({ title: "Error", description: e.message || "Could not add address" });
       throw e;
     } finally {
       setCreating(false);
@@ -59,10 +59,10 @@ export default function ProfileClient({ initialUser, initialAddresses, initialOr
       if (updated.isDefault) {
         setAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })));
       }
-      toast({ title: "Đã lưu", description: "Địa chỉ đã được cập nhật" });
+      toast({ title: "Saved", description: "Address updated." });
     } catch (e: any) {
       console.error(e);
-      toast({ title: "Lỗi", description: e.message || "Không thể cập nhật địa chỉ" });
+      toast({ title: "Error", description: e.message || "Could not update address" });
     } finally {
       setUpdatingId(null);
     }
@@ -73,10 +73,10 @@ export default function ProfileClient({ initialUser, initialAddresses, initialOr
     try {
       await profileService.deleteAddress(id);
       setAddresses((prev) => prev.filter((a) => a.id !== id));
-      toast({ title: "Đã xoá", description: "Địa chỉ đã được xoá" });
+      toast({ title: "Deleted", description: "Address removed." });
     } catch (e: any) {
       console.error(e);
-      toast({ title: "Lỗi", description: e.message || "Không thể xoá địa chỉ" });
+      toast({ title: "Error", description: e.message || "Could not delete address" });
     } finally {
       setDeletingId(null);
     }
@@ -88,7 +88,7 @@ export default function ProfileClient({ initialUser, initialAddresses, initialOr
       setAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })));
     } catch (e: any) {
       console.error(e);
-      toast({ title: "Lỗi", description: e.message || "Không thể đặt mặc định" });
+      toast({ title: "Error", description: e.message || "Could not set as default" });
     }
   }, []);
 

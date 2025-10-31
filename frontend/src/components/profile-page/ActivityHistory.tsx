@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 // Local currency formatter to avoid external utils coupling
 const formatCurrency = (amount: number, currency: string = "VND") =>
-  new Intl.NumberFormat("vi-VN", { style: "currency", currency }).format(
+  new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
     amount
   );
 import type { Review } from "@/types/review.types";
@@ -31,47 +31,47 @@ export type ActivityHistoryProps = {
 function statusBadge(status: OrderStatus) {
   switch (status) {
     case "pending":
-      return <Badge variant="secondary">Chờ thanh toán</Badge>;
+      return <Badge variant="secondary">Pending payment</Badge>;
     case "paid":
-      return <Badge>Đã thanh toán</Badge>;
+      return <Badge>Paid</Badge>;
     case "shipped":
-      return <Badge>Đang giao</Badge>;
+      return <Badge>Shipped</Badge>;
     case "delivered":
       return (
         <Badge className="bg-green-600 hover:bg-green-600 text-white">
-          Hoàn thành
+          Delivered
         </Badge>
       );
     case "cancelled":
-      return <Badge variant="destructive">Đã hủy</Badge>;
+      return <Badge variant="destructive">Cancelled</Badge>;
   }
 }
 
 export function ActivityHistory({ orders, reviews }: ActivityHistoryProps) {
   return (
     <Card className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Lịch sử hoạt động</h2>
+      <h2 className="text-xl font-semibold mb-4">Activity History</h2>
       <Tabs defaultValue="orders" className="w-full">
         <TabsList>
-          <TabsTrigger value="orders">Đơn hàng</TabsTrigger>
-          <TabsTrigger value="reviews">Đánh giá</TabsTrigger>
+          <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="reviews">Reviews</TabsTrigger>
         </TabsList>
         <TabsContent value="orders" className="mt-4">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Mã đơn</TableHead>
-                <TableHead>Ngày</TableHead>
-                <TableHead className="text-right">Sản phẩm</TableHead>
-                <TableHead className="text-right">Tổng tiền</TableHead>
-                <TableHead>Trạng thái</TableHead>
+                <TableHead>Order #</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead className="text-right">Items</TableHead>
+                <TableHead className="text-right">Total</TableHead>
+                <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {orders.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-sm text-muted-foreground">
-                    Chưa có đơn hàng nào.
+                    No orders yet.
                   </TableCell>
                 </TableRow>
               )}
@@ -79,7 +79,7 @@ export function ActivityHistory({ orders, reviews }: ActivityHistoryProps) {
                 <TableRow key={o.id}>
                   <TableCell className="font-medium">{o.code}</TableCell>
                   <TableCell>
-                    {new Date(o.createdAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                    {new Date(o.createdAt).toLocaleDateString("en-US", { day: "2-digit", month: "2-digit", year: "numeric" })}
                   </TableCell>
                   <TableCell className="text-right">{o.itemsCount}</TableCell>
                   <TableCell className="text-right">{formatCurrency(o.total)}</TableCell>
@@ -91,13 +91,13 @@ export function ActivityHistory({ orders, reviews }: ActivityHistoryProps) {
         </TabsContent>
         <TabsContent value="reviews" className="mt-4 space-y-4">
           {reviews.length === 0 && (
-            <div className="text-sm text-muted-foreground">Chưa có đánh giá nào.</div>
+            <div className="text-sm text-muted-foreground">No reviews yet.</div>
           )}
           {reviews.map((r) => (
             <div key={r.id} className="rounded-md border p-4">
               <div className="flex items-center justify-between">
                 <div className="font-medium">{r.user}</div>
-                <div className="text-xs text-muted-foreground">{new Date(r.date).toLocaleDateString("vi-VN")}</div>
+                <div className="text-xs text-muted-foreground">{new Date(r.date).toLocaleDateString("en-US")}</div>
               </div>
               <div className="text-yellow-500 text-sm">{"★".repeat(r.rating)}{"☆".repeat(Math.max(0, 5 - r.rating))}</div>
               <p className="text-sm mt-1">{r.content}</p>

@@ -43,16 +43,8 @@ public class Product {
     @Column(name = "brandId")
     private String brandId;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brandId", insertable = false, updatable = false)
-    private Brand brand;
-    
     @Column(name = "categoryId")
     private String categoryId;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoryId", insertable = false, updatable = false)
-    private Category category;
     
     @Column(name = "defaultImage")
     private String defaultImage;
@@ -74,28 +66,5 @@ public class Product {
     @UpdateTimestamp
     @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
-    
-    // Relationships
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProductVariant> variants;
-    
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProductImage> images;
-    
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Review> reviews;
-    
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<WishlistItem> wishlistItems;
-    
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProductTag> tags;
-    
-    // --- MỚI: Quan hệ với Coupon ---
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CouponApplicableProduct> applicableCoupons; // Thêm quan hệ ngược
-    
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CouponExcludedProduct> excludedCoupons; // Thêm quan hệ ngược
 }
 

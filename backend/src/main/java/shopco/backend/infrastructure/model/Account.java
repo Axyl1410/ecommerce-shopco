@@ -27,10 +27,6 @@ public class Account {
     @Column(name = "userId", nullable = false)
     private String userId;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", insertable = false, updatable = false)
-    private User user;
-    
     @Column(name = "accessToken")
     private String accessToken;
     

@@ -20,10 +20,6 @@ public class Payment {
   @Column(name = "orderId", nullable = false)
   private String orderId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "orderId", insertable = false, updatable = false)
-  private Order order;
-
   @Column(nullable = false)
   private String provider;
 

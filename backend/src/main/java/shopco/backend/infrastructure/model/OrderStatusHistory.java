@@ -21,10 +21,6 @@ public class OrderStatusHistory {
   @Column(name = "orderId", nullable = false)
   private String orderId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "orderId", insertable = false, updatable = false)
-  private Order order;
-
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private OrderStatus status;

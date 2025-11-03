@@ -21,23 +21,11 @@ public class Review {
   @Column(name = "productId", nullable = false)
   private String productId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productId", insertable = false, updatable = false)
-  private Product product;
-
   @Column(name = "userId", nullable = false)
   private String userId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId", insertable = false, updatable = false)
-  private User user;
-
   @Column(name = "orderItemId", unique = true)
   private String orderItemId;
-
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "orderItemId", insertable = false, updatable = false)
-  private OrderItem orderItem;
 
   @Column(nullable = false)
   private Integer rating; // 1-5 stars

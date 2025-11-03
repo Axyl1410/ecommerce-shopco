@@ -68,23 +68,4 @@ public class Coupon {
     @CreationTimestamp
     @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    
-    // --- MỚI: Giới hạn phạm vi áp dụng ---
-    
-    // 3. Phạm vi áp dụng (Nếu cả 4 mảng này đều rỗng, nghĩa là áp dụng cho TOÀN BỘ ĐƠN HÀNG)
-    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CouponApplicableProduct> applicableProducts;
-    
-    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CouponApplicableCategory> applicableCategories;
-    
-    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CouponExcludedProduct> excludedProducts;
-    
-    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CouponExcludedCategory> excludedCategories;
-    
-    // 4. Liên kết với các đơn hàng đã sử dụng (Để theo dõi)
-    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Order> orders;
 }

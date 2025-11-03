@@ -28,10 +28,6 @@ public class ProductVariant {
     @Column(name = "productId", nullable = false)
     private String productId;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "productId", insertable = false, updatable = false)
-    private Product product;
-    
     @Column(unique = true)
     private String sku;
     
@@ -49,14 +45,4 @@ public class ProductVariant {
     
     private Float weight;
     private String barcode;
-    
-    // Relationships
-    @OneToMany(mappedBy = "variant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProductImage> images;
-    
-    @OneToMany(mappedBy = "variant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CartItem> cartItems;
-    
-    @OneToMany(mappedBy = "variant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderItem> orderItems;
 }

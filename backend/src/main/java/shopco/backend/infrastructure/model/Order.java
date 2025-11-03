@@ -39,10 +39,6 @@ public class Order {
     @Column(name = "userId", nullable = false)
     private String userId;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", insertable = false, updatable = false)
-    private User user;
-    
     @Column(name = "totalAmount", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
     
@@ -86,26 +82,9 @@ public class Order {
     @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
     
-    // Relationships
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderItem> items;
-    
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Payment> payments;
-    
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderStatusHistory> statusHistory;
-    
-    // --- MỚI: Thêm liên kết Coupon ---
     @Column(name = "couponId")
     private String couponId;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "couponId", insertable = false, updatable = false)
-    private Coupon coupon;
-    
-    // --- CẬP NHẬT: Thêm trường để lưu mã coupon đã áp dụng ---
-    // (Rất quan trọng để tra cứu sau này, ngay cả khi coupon gốc bị thay đổi/xóa)
     @Column(name = "appliedCouponCode")
     private String appliedCouponCode;
 }

@@ -30,14 +30,6 @@ public class CouponApplicableCategory {
   @Column(name = "categoryId", nullable = false)
   private String categoryId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "couponId", insertable = false, updatable = false)
-  private Coupon coupon;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "categoryId", insertable = false, updatable = false)
-  private Category category;
-
   @Data
   @NoArgsConstructor
   @AllArgsConstructor

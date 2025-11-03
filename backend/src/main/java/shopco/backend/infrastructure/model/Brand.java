@@ -41,8 +41,4 @@ public class Brand {
     @UpdateTimestamp
     @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
-    
-    // Relationships
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Product> products;
 }

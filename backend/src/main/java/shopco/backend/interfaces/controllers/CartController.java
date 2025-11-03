@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/cart")
 public class CartController {
     
     private final ICartService cartService;

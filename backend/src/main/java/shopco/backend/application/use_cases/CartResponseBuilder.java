@@ -67,23 +67,13 @@ public class CartResponseBuilder {
         
         // Fetch variant and product information
         ProductVariant variant = productVariantRepository.findById(item.getVariantId())
-            .orElse(null);
-        
-        String productName = "Product Name";
-        String sku = "SKU-" + item.getVariantId();
-        String attributes = "{}";
-        
-        if (variant != null) {
-            sku = variant.getSku() != null ? variant.getSku() : sku;
-            attributes = variant.getAttributes() != null ? variant.getAttributes() : attributes;
-            
-            // Fetch product name
-            Product product = productRepository.findById(variant.getProductId())
-                .orElse(null);
-            if (product != null) {
-                productName = product.getName();
-            }
-        }
+            .orElseThrow(() -> new IllegalStateException("Variant not found for cart item: " + item.getVariantId()));
+
+        String sku = variant.getSku();
+        String attributes = variant.getAttributes() != null ? variant.getAttributes() : "{}";
+
+        Product product = productRepository.findById(variant.getProductId()).orElse(null);
+        String productName = product != null ? product.getName() : null;
         
         return new CartItemResponse(
             item.getId(),

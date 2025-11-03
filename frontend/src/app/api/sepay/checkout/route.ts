@@ -19,10 +19,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = CheckoutBodySchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: parsed.error.flatten() },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
     const {
       operation = "PURCHASE",

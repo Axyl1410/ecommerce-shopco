@@ -2,6 +2,7 @@ package shopco.backend.application.use_cases;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -58,7 +59,7 @@ public class ProfileService {
             addressRepository.clearDefaultForUser(userId);
         }
         Address address = new Address();
-        address.setId(dto.id);
+        address.setId(UUID.randomUUID().toString());
         address.setUserId(userId);
         address.setName(dto.name);
         address.setPhone(dto.phone);

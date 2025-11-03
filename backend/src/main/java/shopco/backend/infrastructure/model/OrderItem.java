@@ -18,16 +18,8 @@ public class OrderItem {
   @Column(name = "orderId", nullable = false)
   private String orderId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "orderId", insertable = false, updatable = false)
-  private Order order;
-
   @Column(name = "variantId", nullable = false)
   private String variantId;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "variantId", insertable = false, updatable = false)
-  private ProductVariant variant;
 
   @Column(name = "productName", nullable = false)
   private String productName;

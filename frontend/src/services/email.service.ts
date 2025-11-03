@@ -18,7 +18,7 @@ export class EmailService {
     try {
       await resend.emails.send({
         to: [user.email],
-        from: "ShopCo Team <noreply@shopco.com>",
+        from: "Axyl Team <onboarding@resend.dev>",
         subject: "Reset your password",
         react: ResetPasswordEmail({
           userFirstname: user.name,
@@ -41,7 +41,7 @@ export class EmailService {
     try {
       await resend.emails.send({
         to: [user.email],
-        from: "ShopCo Team <noreply@shopco.com>",
+        from: "Axyl Team <onboarding@resend.dev>",
         subject: "Verify your email",
         react: VerificationEmail({
           userFirstname: user.name,

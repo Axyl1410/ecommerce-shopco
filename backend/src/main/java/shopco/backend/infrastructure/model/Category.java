@@ -39,16 +39,8 @@ public class Category {
     @Column(name = "imageUrl")
     private String imageUrl;
     
-    // Self-referencing for hierarchy
     @Column(name = "parentId")
     private String parentId;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parentId", insertable = false, updatable = false)
-    private Category parent;
-    
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Category> children;
     
     @Column(name = "sortOrder")
     private Integer sortOrder = 0;
@@ -63,15 +55,4 @@ public class Category {
     @UpdateTimestamp
     @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
-    
-    // Relationships
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Product> products;
-    
-    // --- MỚI: Quan hệ với Coupon ---
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CouponApplicableCategory> applicableCoupons; // Thêm quan hệ ngược
-    
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CouponExcludedCategory> excludedCoupons; // Thêm quan hệ ngược
 }

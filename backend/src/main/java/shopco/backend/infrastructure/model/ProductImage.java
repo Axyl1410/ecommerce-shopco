@@ -17,16 +17,8 @@ public class ProductImage {
   @Column(name = "productId", nullable = false)
   private String productId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productId", insertable = false, updatable = false)
-  private Product product;
-
   @Column(name = "variantId")
   private String variantId;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "variantId", insertable = false, updatable = false)
-  private ProductVariant variant;
 
   @Column(nullable = false)
   private String url;

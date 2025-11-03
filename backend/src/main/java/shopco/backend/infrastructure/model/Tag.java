@@ -20,8 +20,4 @@ public class Tag {
 
   @Column(nullable = false, unique = true)
   private String slug;
-
-  // Relationships
-  @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<ProductTag> products;
 }

@@ -19,10 +19,6 @@ public class AuditLog {
   @Column(name = "userId")
   private String userId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId", insertable = false, updatable = false)
-  private User user;
-
   @Column(nullable = false)
   private String action;
 

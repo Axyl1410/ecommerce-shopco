@@ -6,5 +6,5 @@ import shopco.backend.infrastructure.model.ProductVariant;
 
 @Repository
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, String> {
-
 }
+

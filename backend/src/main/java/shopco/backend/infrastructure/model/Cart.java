@@ -21,10 +21,6 @@ public class Cart {
   @Column(name = "userId", unique = true)
   private String userId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId", insertable = false, updatable = false)
-  private User user;
-
   @Column(name = "sessionId", unique = true)
   private String sessionId;
 
@@ -35,8 +31,4 @@ public class Cart {
   @UpdateTimestamp
   @Column(name = "updatedAt", nullable = false)
   private LocalDateTime updatedAt;
-
-  // Relationships
-  @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<CartItem> items;
 }

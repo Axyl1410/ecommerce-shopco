@@ -30,14 +30,6 @@ public class CouponExcludedProduct {
   @Column(name = "productId", nullable = false)
   private String productId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "couponId", insertable = false, updatable = false)
-  private Coupon coupon;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productId", insertable = false, updatable = false)
-  private Product product;
-
   @Data
   @NoArgsConstructor
   @AllArgsConstructor

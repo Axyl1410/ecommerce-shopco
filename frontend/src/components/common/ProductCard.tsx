@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import type { Product } from "@/types/product.types";
+import { formatCurrency, toCents, fromCents } from "@/lib/utils";
 import Rating from "../ui/Rating";
 
 type ProductCardProps = {
@@ -42,30 +43,48 @@ const ProductCard = ({ data }: ProductCardProps) => {
       <div className="flex items-center space-x-[5px] xl:space-x-2.5">
         {data.discount.percentage > 0 ? (
           <>
-            <span className="font-bold text-black text-xl xl:text-2xl">
-              {`$${Math.round(data.price - (data.price * data.discount.percentage) / 100)}`}
-            </span>
-            <span className="font-bold text-black/40 line-through text-xl xl:text-2xl">
-              ${data.price}
-            </span>
+            {(() => {
+              const priceCents = toCents(data.price);
+              const discountCents = Math.round((priceCents * data.discount.percentage) / 100);
+              const finalCents = priceCents - discountCents;
+              return (
+                <>
+                  <span className="font-bold text-black text-xl xl:text-2xl">
+                    {formatCurrency(fromCents(finalCents))}
+                  </span>
+                  <span className="font-bold text-black/40 line-through text-xl xl:text-2xl">
+                    {formatCurrency(fromCents(priceCents))}
+                  </span>
+                </>
+              );
+            })()}
             <span className="font-medium text-[10px] xl:text-xs py-1.5 px-3.5 rounded-full bg-[#FF3333]/10 text-[#FF3333]">
               {`-${data.discount.percentage}%`}
             </span>
           </>
         ) : data.discount.amount > 0 ? (
           <>
-            <span className="font-bold text-black text-xl xl:text-2xl">
-              {`$${data.price - data.discount.amount}`}
-            </span>
-            <span className="font-bold text-black/40 line-through text-xl xl:text-2xl">
-              ${data.price}
-            </span>
+            {(() => {
+              const priceCents = toCents(data.price);
+              const discountCents = toCents(data.discount.amount);
+              const finalCents = priceCents - discountCents;
+              return (
+                <>
+                  <span className="font-bold text-black text-xl xl:text-2xl">
+                    {formatCurrency(fromCents(finalCents))}
+                  </span>
+                  <span className="font-bold text-black/40 line-through text-xl xl:text-2xl">
+                    {formatCurrency(fromCents(priceCents))}
+                  </span>
+                </>
+              );
+            })()}
             <span className="font-medium text-[10px] xl:text-xs py-1.5 px-3.5 rounded-full bg-[#FF3333]/10 text-[#FF3333]">
-              {`-$${data.discount.amount}`}
+              {`-${formatCurrency(data.discount.amount)}`}
             </span>
           </>
         ) : (
-          <span className="font-bold text-black text-xl xl:text-2xl">${data.price}</span>
+          <span className="font-bold text-black text-xl xl:text-2xl">{formatCurrency(data.price)}</span>
         )}
       </div>
     </Link>

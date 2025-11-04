@@ -1,0 +1,64 @@
+@startuml UC01_OpenProfile
+' UC-01: Open Profile
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam DefaultFontName Arial
+left to right direction
+
+rectangle "Entities Circle" as EC {
+  class User
+  class Address
+  class Order
+  class Review
+}
+
+rectangle "Use Case Circle" as UC {
+  interface InputBoundary <<interface>>
+  interface OutputBoundary <<interface>>
+  class ProfileService as Interactor {
+    +execute(req: OpenProfileRequest): OpenProfileResponse
+  }
+  class OpenProfileRequestModel
+  class OpenProfileResponseModel
+
+  InputBoundary <|.. Interactor
+  Interactor ..|> OutputBoundary
+}
+
+rectangle "Interface Adapters" as IA {
+  class ProfileController {
+    +getProfile(): HTTP JSON
+  }
+  class ProfilePresenter {
+    +present(res: OpenProfileResponseModel)
+  }
+  class UserProfileDTO
+  class AddressDTO
+  class OrderSummaryDTO
+  class ReviewDTO
+}
+
+rectangle "Frameworks & Drivers" as FD {
+  node "Spring Boot MVC" as Spring
+  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
+  collections "HTTP/JSON Client (Frontend)" as FE
+}
+
+' Flow
+ProfileController --> InputBoundary : execute(OpenProfileRequestModel)
+Interactor --> UserRepository : load User
+Interactor --> AddressRepository : load Addresses
+Interactor --> OrderRepository : load Orders
+Interactor --> ReviewRepository : load Reviews
+Interactor --> OutputBoundary : present(OpenProfileResponse)
+OutputBoundary <.. ProfilePresenter
+ProfilePresenter --> UserProfileDTO
+ProfilePresenter --> AddressDTO
+ProfilePresenter --> OrderSummaryDTO
+ProfilePresenter --> ReviewDTO
+ProfileController <-- UserProfileDTO : HTTP JSON
+ProfileController <-- AddressDTO
+ProfileController <-- OrderSummaryDTO
+ProfileController <-- ReviewDTO
+
+@enduml

@@ -1,0 +1,47 @@
+@startuml UC03_EditProfile
+' UC-03: Edit Profile (enter edit mode, client-side validation)
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam DefaultFontName Arial
+left to right direction
+
+rectangle "Entities Circle" as EC {
+  class User
+}
+
+rectangle "Use Case Circle" as UC {
+  interface InputBoundary <<interface>>
+  interface OutputBoundary <<interface>>
+  class ProfileService as Interactor {
+    +execute(req: EditProfileRequest): EditProfileResponse
+  }
+  class EditProfileRequest
+  class EditProfileResponse
+  note right of Interactor
+    Interactor mainly validates intent
+    and may preload current data
+  end note
+
+  InputBoundary <|.. Interactor
+  Interactor ..|> OutputBoundary
+}
+
+rectangle "Interface Adapters" as IA {
+  class ProfileController { +editProfile() }
+  class ProfilePresenter { +present(res: EditProfileResponse) }
+  class EditProfileVM as ViewModel
+}
+
+rectangle "Frameworks & Drivers" as FD {
+  node "Spring Boot MVC" as Spring
+  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
+  collections "HTTP/JSON Client (Frontend)" as FE
+}
+
+ProfileController --> InputBoundary : execute(EditProfileRequest)
+Interactor --> OutputBoundary : present(EditProfileResponse)
+OutputBoundary <.. ProfilePresenter
+ProfilePresenter --> ViewModel
+ProfileController <-- ViewModel : HTTP JSON (form model)
+
+@enduml

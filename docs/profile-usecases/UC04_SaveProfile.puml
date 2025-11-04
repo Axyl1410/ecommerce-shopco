@@ -1,0 +1,43 @@
+@startuml UC04_SaveProfile
+' UC-04: Save Profile
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam DefaultFontName Arial
+left to right direction
+
+rectangle "Entities Circle" as EC {
+  class User
+}
+
+rectangle "Use Case Circle" as UC {
+  interface InputBoundary <<interface>>
+  interface OutputBoundary <<interface>>
+  class ProfileService as Interactor {
+    +execute(dto: UpdateProfileDTO): UserProfileDTO
+  }
+  class UpdateProfileDTO
+  class UserProfileDTO
+
+  InputBoundary <|.. Interactor
+  Interactor ..|> OutputBoundary
+}
+
+rectangle "Interface Adapters" as IA {
+  class ProfileController { +patchProfile(body: UpdateProfileDTO) }
+  class ProfilePresenter { +present(res: UserProfileDTO) }
+  class UserProfileDTO
+}
+
+rectangle "Frameworks & Drivers" as FD {
+  node "Spring Boot MVC" as Spring
+  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
+}
+
+ProfileController --> InputBoundary : execute(UpdateProfileDTO)
+Interactor --> UserRepository : save(name, image)
+Interactor --> OutputBoundary : present(UserProfileDTO)
+OutputBoundary <.. ProfilePresenter
+ProfilePresenter --> UserProfileDTO
+ProfileController <-- UserProfileDTO : HTTP JSON
+
+@enduml

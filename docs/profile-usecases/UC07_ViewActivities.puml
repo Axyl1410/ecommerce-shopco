@@ -1,0 +1,48 @@
+@startuml UC07_ViewActivities
+' UC-07: View Activities (Orders + Reviews)
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam DefaultFontName Arial
+left to right direction
+
+rectangle "Entities Circle" as EC {
+  class Order
+  class Review
+}
+
+rectangle "Use Case Circle" as UC {
+  interface InputBoundary <<interface>>
+  interface OutputBoundary <<interface>>
+  class ProfileService as Interactor {
+    +execute(req: GetActivityRequest): GetActivityResponse
+  }
+  class GetActivityRequest
+  class GetActivityResponse
+
+  InputBoundary <|.. Interactor
+  Interactor ..|> OutputBoundary
+}
+
+rectangle "Interface Adapters" as IA {
+  class ProfileController { +getActivity() }
+  class ActivityPresenter { +present(res: GetActivityResponse) }
+  class OrderSummaryDTO
+  class ReviewDTO
+}
+
+rectangle "Frameworks & Drivers" as FD {
+  node "Spring Boot MVC" as Spring
+  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
+}
+
+ProfileController --> InputBoundary : execute(GetActivityRequest)
+Interactor --> OrderRepository : list orders by createdAt desc
+Interactor --> ReviewRepository : list reviews by createdAt desc
+Interactor --> OutputBoundary : present(GetActivityResponse)
+OutputBoundary <.. ActivityPresenter
+ActivityPresenter --> OrderSummaryDTO
+ActivityPresenter --> ReviewDTO
+ProfileController <-- OrderSummaryDTO : HTTP JSON
+ProfileController <-- ReviewDTO : HTTP JSON
+
+@enduml

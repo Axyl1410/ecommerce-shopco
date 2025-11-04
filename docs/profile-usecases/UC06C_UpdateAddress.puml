@@ -1,0 +1,44 @@
+@startuml UC06C_UpdateAddress
+' UC-06C: Update Address
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam DefaultFontName Arial
+left to right direction
+
+rectangle "Entities Circle" as EC {
+  class Address
+}
+
+rectangle "Use Case Circle" as UC {
+  interface InputBoundary <<interface>>
+  interface OutputBoundary <<interface>>
+  class ProfileService as Interactor {
+    +execute(req: UpdateAddressRequest): AddressDTO
+  }
+  class UpdateAddressRequest
+  class AddressDTO
+
+  InputBoundary <|.. Interactor
+  Interactor ..|> OutputBoundary
+}
+
+rectangle "Interface Adapters" as IA {
+  class ProfileController { +updateAddress(id, body) }
+  class AddressPresenter { +present(res: AddressDTO) }
+  class AddressDTO
+}
+
+rectangle "Frameworks & Drivers" as FD {
+  node "Spring Boot MVC" as Spring
+  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
+}
+
+ProfileController --> InputBoundary : execute(UpdateAddressRequest)
+Interactor --> AddressRepository : verify ownership
+Interactor --> AddressRepository : update fields; if isDefault -> clear others
+Interactor --> OutputBoundary : present(AddressDTO)
+OutputBoundary <.. AddressPresenter
+AddressPresenter --> AddressDTO
+ProfileController <-- AddressDTO : HTTP JSON
+
+@enduml

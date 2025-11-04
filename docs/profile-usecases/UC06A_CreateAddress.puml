@@ -1,0 +1,43 @@
+@startuml UC06A_CreateAddress
+' UC-06A: Create Address
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam DefaultFontName Arial
+left to right direction
+
+package "Entities Circle" as EC {
+  class Address
+}
+
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
+    +execute(req: AddressDTO): AddressDTO
+  }
+  class AddressDTO
+
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
+}
+
+package "Interface Adapters" as IA {
+  class ProfileController { +createAddress(body: AddressDTO) }
+  class AddressPresenter { +present(res: AddressDTO) }
+  class AddressDTO
+}
+
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
+}
+
+ProfileController --> InputBoundary : execute(AddressDTO)
+ProfileService --> AddressRepository : if isDefault -> clear others
+ProfileService --> AddressRepository : insert Address
+ProfileService --> OutputBoundary : present(AddressDTO)
+OutputBoundary <.. AddressPresenter
+AddressPresenter --> AddressDTO
+ProfileController <-- AddressDTO : HTTP JSON (201)
+
+@enduml

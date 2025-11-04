@@ -5,38 +5,38 @@ skinparam packageStyle rectangle
 skinparam DefaultFontName Arial
 left to right direction
 
-rectangle "Entities Circle" as EC {
+package "Entities Circle" as EC {
   class User
 }
 
-rectangle "Use Case Circle" as UC {
-  interface InputBoundary <<interface>>
-  interface OutputBoundary <<interface>>
-  class ProfileService as Interactor {
-    +execute(req: ViewProfileRequest): ViewProfileResponse
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
+    +execute(req: ViewProfileRequestModel): ViewProfileResponseModel
   }
-  class ViewProfileRequest
-  class ViewProfileResponse
+  class ViewProfileRequestModel
+  class ViewProfileResponseModel
 
-  InputBoundary <|.. Interactor
-  Interactor ..|> OutputBoundary
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
 }
 
-rectangle "Interface Adapters" as IA {
+package "Interface Adapters" as IA {
   class ProfileController { +getProfile() }
-  class ProfilePresenter { +present(res: ViewProfileResponse) }
+  class ProfilePresenter { +present(res: ViewProfileResponseModel) }
   class UserProfileDTO
 }
 
-rectangle "Frameworks & Drivers" as FD {
-  node "Spring Boot MVC" as Spring
-  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
-  collections "HTTP/JSON Client (Frontend)" as FE
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
+  class "HTTP/JSON Client (Frontend)"
 }
 
-ProfileController --> InputBoundary : execute(ViewProfileRequest)
-Interactor --> UserRepository : find user by id
-Interactor --> OutputBoundary : present(ViewProfileResponse)
+ProfileController --> InputBoundary : execute(ViewProfileRequestModel)
+ProfileService --> UserRepository : find user by id
+ProfileService --> OutputBoundary : present(ViewProfileResponseModel)
 OutputBoundary <.. ProfilePresenter
 ProfilePresenter --> UserProfileDTO
 ProfileController <-- UserProfileDTO : HTTP JSON

@@ -5,37 +5,38 @@ skinparam packageStyle rectangle
 skinparam DefaultFontName Arial
 left to right direction
 
-rectangle "Entities Circle" as EC {
+package "Entities Circle" as EC {
   class Address
 }
 
-rectangle "Use Case Circle" as UC {
-  interface InputBoundary <<interface>>
-  interface OutputBoundary <<interface>>
-  class ProfileService as Interactor {
-    +execute(req: ListAddressesRequest): AddressDTO[]
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
+    +execute(req: ListAddressesRequest): AddressDTOList
   }
   class ListAddressesRequest
   class AddressDTO
+  class AddressDTOList
 
-  InputBoundary <|.. Interactor
-  Interactor ..|> OutputBoundary
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
 }
 
-rectangle "Interface Adapters" as IA {
+package "Interface Adapters" as IA {
   class ProfileController { +listAddresses() }
-  class AddressPresenter { +present(res: AddressDTO[]) }
+  class AddressPresenter { +present(res: AddressDTOList) }
   class AddressDTO
 }
 
-rectangle "Frameworks & Drivers" as FD {
-  node "Spring Boot MVC" as Spring
-  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
 }
 
 ProfileController --> InputBoundary : execute(ListAddressesRequest)
-Interactor --> AddressRepository : find by user ordered by default desc, createdAt desc
-Interactor --> OutputBoundary : present(AddressDTO[])
+ProfileService --> AddressRepository : find by user ordered by default desc, createdAt desc
+ProfileService --> OutputBoundary : present(AddressDTOList)
 OutputBoundary <.. AddressPresenter
 AddressPresenter --> AddressDTO
 ProfileController <-- AddressDTO : HTTP JSON

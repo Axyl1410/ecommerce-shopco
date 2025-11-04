@@ -5,41 +5,41 @@ skinparam packageStyle rectangle
 skinparam DefaultFontName Arial
 left to right direction
 
-rectangle "Entities Circle" as EC {
+package "Entities Circle" as EC {
   class User
 }
 
-rectangle "Use Case Circle" as UC {
-  interface InputBoundary <<interface>>
-  interface OutputBoundary <<interface>>
-  class ProfileService as Interactor {
-    +execute(req: EditProfileRequest): EditProfileResponse
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
+    +execute(req: EditProfileRequestModel): EditProfileResponseModel
   }
-  class EditProfileRequest
-  class EditProfileResponse
-  note right of Interactor
+  class EditProfileRequestModel
+  class EditProfileResponseModel
+  note right of ProfileService
     Interactor mainly validates intent
     and may preload current data
   end note
 
-  InputBoundary <|.. Interactor
-  Interactor ..|> OutputBoundary
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
 }
 
-rectangle "Interface Adapters" as IA {
+package "Interface Adapters" as IA {
   class ProfileController { +editProfile() }
-  class ProfilePresenter { +present(res: EditProfileResponse) }
+  class ProfilePresenter { +present(res: EditProfileResponseModel) }
   class EditProfileVM as ViewModel
 }
 
-rectangle "Frameworks & Drivers" as FD {
-  node "Spring Boot MVC" as Spring
-  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
-  collections "HTTP/JSON Client (Frontend)" as FE
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
+  class "HTTP/JSON Client (Frontend)"
 }
 
-ProfileController --> InputBoundary : execute(EditProfileRequest)
-Interactor --> OutputBoundary : present(EditProfileResponse)
+ProfileController --> InputBoundary : execute(EditProfileRequestModel)
+ProfileService --> OutputBoundary : present(EditProfileResponseModel)
 OutputBoundary <.. ProfilePresenter
 ProfilePresenter --> ViewModel
 ProfileController <-- ViewModel : HTTP JSON (form model)

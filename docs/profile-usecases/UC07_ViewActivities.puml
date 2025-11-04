@@ -5,40 +5,40 @@ skinparam packageStyle rectangle
 skinparam DefaultFontName Arial
 left to right direction
 
-rectangle "Entities Circle" as EC {
+package "Entities Circle" as EC {
   class Order
   class Review
 }
 
-rectangle "Use Case Circle" as UC {
-  interface InputBoundary <<interface>>
-  interface OutputBoundary <<interface>>
-  class ProfileService as Interactor {
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
     +execute(req: GetActivityRequest): GetActivityResponse
   }
   class GetActivityRequest
   class GetActivityResponse
 
-  InputBoundary <|.. Interactor
-  Interactor ..|> OutputBoundary
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
 }
 
-rectangle "Interface Adapters" as IA {
+package "Interface Adapters" as IA {
   class ProfileController { +getActivity() }
   class ActivityPresenter { +present(res: GetActivityResponse) }
   class OrderSummaryDTO
   class ReviewDTO
 }
 
-rectangle "Frameworks & Drivers" as FD {
-  node "Spring Boot MVC" as Spring
-  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
 }
 
 ProfileController --> InputBoundary : execute(GetActivityRequest)
-Interactor --> OrderRepository : list orders by createdAt desc
-Interactor --> ReviewRepository : list reviews by createdAt desc
-Interactor --> OutputBoundary : present(GetActivityResponse)
+ProfileService --> OrderRepository : list orders by createdAt desc
+ProfileService --> ReviewRepository : list reviews by createdAt desc
+ProfileService --> OutputBoundary : present(GetActivityResponse)
 OutputBoundary <.. ActivityPresenter
 ActivityPresenter --> OrderSummaryDTO
 ActivityPresenter --> ReviewDTO

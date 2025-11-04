@@ -5,27 +5,27 @@ skinparam packageStyle rectangle
 skinparam DefaultFontName Arial
 left to right direction
 
-rectangle "Entities Circle" as EC {
+package "Entities Circle" as EC {
   class User
   class Address
   class Order
   class Review
 }
 
-rectangle "Use Case Circle" as UC {
-  interface InputBoundary <<interface>>
-  interface OutputBoundary <<interface>>
-  class ProfileService as Interactor {
-    +execute(req: OpenProfileRequest): OpenProfileResponse
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
+    +execute(req: OpenProfileRequestModel): OpenProfileResponseModel
   }
   class OpenProfileRequestModel
   class OpenProfileResponseModel
 
-  InputBoundary <|.. Interactor
-  Interactor ..|> OutputBoundary
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
 }
 
-rectangle "Interface Adapters" as IA {
+package "Interface Adapters" as IA {
   class ProfileController {
     +getProfile(): HTTP JSON
   }
@@ -38,19 +38,19 @@ rectangle "Interface Adapters" as IA {
   class ReviewDTO
 }
 
-rectangle "Frameworks & Drivers" as FD {
-  node "Spring Boot MVC" as Spring
-  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
-  collections "HTTP/JSON Client (Frontend)" as FE
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
+  class "HTTP/JSON Client (Frontend)" as FE
 }
 
 ' Flow
 ProfileController --> InputBoundary : execute(OpenProfileRequestModel)
-Interactor --> UserRepository : load User
-Interactor --> AddressRepository : load Addresses
-Interactor --> OrderRepository : load Orders
-Interactor --> ReviewRepository : load Reviews
-Interactor --> OutputBoundary : present(OpenProfileResponse)
+ProfileService --> UserRepository : load User
+ProfileService --> AddressRepository : load Addresses
+ProfileService --> OrderRepository : load Orders
+ProfileService --> ReviewRepository : load Reviews
+ProfileService --> OutputBoundary : present(OpenProfileResponseModel)
 OutputBoundary <.. ProfilePresenter
 ProfilePresenter --> UserProfileDTO
 ProfilePresenter --> AddressDTO

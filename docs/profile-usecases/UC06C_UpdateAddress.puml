@@ -5,38 +5,38 @@ skinparam packageStyle rectangle
 skinparam DefaultFontName Arial
 left to right direction
 
-rectangle "Entities Circle" as EC {
+package "Entities Circle" as EC {
   class Address
 }
 
-rectangle "Use Case Circle" as UC {
-  interface InputBoundary <<interface>>
-  interface OutputBoundary <<interface>>
-  class ProfileService as Interactor {
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
     +execute(req: UpdateAddressRequest): AddressDTO
   }
   class UpdateAddressRequest
   class AddressDTO
 
-  InputBoundary <|.. Interactor
-  Interactor ..|> OutputBoundary
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
 }
 
-rectangle "Interface Adapters" as IA {
+package "Interface Adapters" as IA {
   class ProfileController { +updateAddress(id, body) }
   class AddressPresenter { +present(res: AddressDTO) }
   class AddressDTO
 }
 
-rectangle "Frameworks & Drivers" as FD {
-  node "Spring Boot MVC" as Spring
-  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
 }
 
 ProfileController --> InputBoundary : execute(UpdateAddressRequest)
-Interactor --> AddressRepository : verify ownership
-Interactor --> AddressRepository : update fields; if isDefault -> clear others
-Interactor --> OutputBoundary : present(AddressDTO)
+ProfileService --> AddressRepository : verify ownership
+ProfileService --> AddressRepository : update fields; if isDefault -> clear others
+ProfileService --> OutputBoundary : present(AddressDTO)
 OutputBoundary <.. AddressPresenter
 AddressPresenter --> AddressDTO
 ProfileController <-- AddressDTO : HTTP JSON

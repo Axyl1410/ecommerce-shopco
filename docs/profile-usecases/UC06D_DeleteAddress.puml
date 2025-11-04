@@ -5,37 +5,37 @@ skinparam packageStyle rectangle
 skinparam DefaultFontName Arial
 left to right direction
 
-rectangle "Entities Circle" as EC {
+package "Entities Circle" as EC {
   class Address
 }
 
-rectangle "Use Case Circle" as UC {
-  interface InputBoundary <<interface>>
-  interface OutputBoundary <<interface>>
-  class ProfileService as Interactor {
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
     +execute(req: DeleteAddressRequest): DeleteResultDTO
   }
   class DeleteAddressRequest
   class DeleteResultDTO
 
-  InputBoundary <|.. Interactor
-  Interactor ..|> OutputBoundary
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
 }
 
-rectangle "Interface Adapters" as IA {
+package "Interface Adapters" as IA {
   class ProfileController { +deleteAddress(id) }
   class AddressPresenter { +present(res: DeleteResultDTO) }
   class DeleteResultDTO
 }
 
-rectangle "Frameworks & Drivers" as FD {
-  node "Spring Boot MVC" as Spring
-  database "DB (Postgres/H2)\nJPA/Hibernate" as DB
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
 }
 
 ProfileController --> InputBoundary : execute(DeleteAddressRequest)
-Interactor --> AddressRepository : verify ownership; delete address
-Interactor --> OutputBoundary : present(DeleteResultDTO)
+ProfileService --> AddressRepository : verify ownership; delete address
+ProfileService --> OutputBoundary : present(DeleteResultDTO)
 OutputBoundary <.. AddressPresenter
 AddressPresenter --> DeleteResultDTO
 ProfileController <-- DeleteResultDTO : HTTP JSON

@@ -17,6 +17,7 @@ import shopco.backend.infrastructure.model.User;
 import shopco.backend.infrastructure.repository.AddressRepository;
 import shopco.backend.infrastructure.repository.OrderRepository;
 import shopco.backend.infrastructure.repository.ReviewRepository;
+import shopco.backend.infrastructure.repository.OrderItemRepository;
 import shopco.backend.infrastructure.repository.UserRepository;
 
 @Service
@@ -27,6 +28,7 @@ public class ProfileService {
     private final AddressRepository addressRepository;
     private final OrderRepository orderRepository;
     private final ReviewRepository reviewRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public Optional<UserProfileDTO> getProfile(String userId) {
         return userRepository.findById(userId).map(u -> new UserProfileDTO(
@@ -150,7 +152,8 @@ public class ProfileService {
         dto.createdAt = o.getCreatedAt();
         dto.total = o.getFinalAmount();
         dto.status = o.getOrderStatus();
-        dto.itemsCount = (o.getItems() != null) ? o.getItems().size() : 0;
+        // Order entity does not expose items; count via repository to avoid changing entities
+        dto.itemsCount = (int) orderItemRepository.countByOrderId(o.getId());
         return dto;
     }
 

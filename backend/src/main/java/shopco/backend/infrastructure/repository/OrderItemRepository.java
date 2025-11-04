@@ -6,5 +6,5 @@ import shopco.backend.infrastructure.model.OrderItem;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, String> {
-
+	long countByOrderId(String orderId);
 }

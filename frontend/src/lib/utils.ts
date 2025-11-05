@@ -29,3 +29,31 @@ export const assertValue = <T>(
 
   return value;
 };
+
+// Currency helpers -------------------------------------------------
+/**
+ * Convert a decimal amount (e.g. 1499.99) to integer cents (e.g. 149999)
+ * Uses Math.round to avoid floating point drift.
+ */
+export const toCents = (amount: number) => Math.round(Number(amount) * 100);
+
+/**
+ * Convert cents back to decimal amount.
+ */
+export const fromCents = (cents: number) => cents / 100;
+
+/**
+ * Format a decimal amount as currency using Intl.NumberFormat. Defaults to en-US / USD.
+ */
+export const formatCurrency = (
+  amount: number,
+  locale: string = "en-US",
+  currency: string = "USD"
+) =>
+  new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(amount));
+

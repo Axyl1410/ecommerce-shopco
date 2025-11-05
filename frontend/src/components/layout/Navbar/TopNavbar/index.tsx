@@ -108,27 +108,30 @@ const TopNavbar = async () => {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-        <InputGroup className="mr-3 hidden bg-[#F0F0F0] md:flex lg:mr-10">
-          <InputGroup.Text>
-            <Image
-              priority
-              src="/icons/search.svg"
-              height={20}
-              width={20}
-              alt="search"
-              className="min-h-5 min-w-5"
+        <form action="/search" method="get" className="mr-3 hidden md:flex lg:mr-10">
+          <InputGroup className="bg-[#F0F0F0]">
+            <InputGroup.Text>
+              <Image
+                priority
+                src="/icons/search.svg"
+                height={20}
+                width={20}
+                alt="search"
+                className="min-h-5 min-w-5"
+              />
+            </InputGroup.Text>
+            <InputGroup.Input
+              type="search"
+              name="q"
+              placeholder="Search for products..."
+              className="bg-transparent placeholder:text-black/40"
+              required
             />
-          </InputGroup.Text>
-          <InputGroup.Input
-            type="search"
-            name="search"
-            placeholder="Search for products..."
-            className="bg-transparent placeholder:text-black/40"
-          />
-        </InputGroup>
+          </InputGroup>
+        </form>
         <div className="flex items-center space-x-2">
           <Link
-            href={"/search" as any}
+            href="/search-form"
             className="block p-1 transition-all duration-200 hover:scale-105 hover:opacity-80 md:hidden"
           >
             <Image

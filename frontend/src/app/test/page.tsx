@@ -11,6 +11,7 @@ export default function TestPage() {
   const { isLoading, error, data } = useQuery({
     queryKey: ["repoData"],
     queryFn: fetchGroups,
+    staleTime: 60_000,
   });
 
   if (isLoading)

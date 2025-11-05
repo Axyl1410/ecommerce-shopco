@@ -216,8 +216,8 @@ export default function Home() {
           data={newArrivalsData}
           viewAllLink="/shop#new-arrivals"
         />
-        <div className="max-w-frame mx-auto px-4 xl:px-0">
-          <hr className="h-[1px] border-t-black/10 my-10 sm:my-16" />
+        <div className="mx-auto max-w-frame px-4 xl:px-0">
+          <hr className="my-10 h-px border-t-black/10 sm:my-16" />
         </div>
         <div className="mb-[50px] sm:mb-20">
           <ProductListSec

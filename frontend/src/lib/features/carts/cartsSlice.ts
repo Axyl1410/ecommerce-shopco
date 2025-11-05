@@ -25,6 +25,7 @@ export type RemoveCartItem = {
 
 // Local cart item for client-side cart management
 export type LocalCartItem = {
+  cartItemId?: string;
   id: number | string;
   name: string;
   srcUrl: string;
@@ -217,6 +218,85 @@ export const cartsSlice = createSlice({
           attrs = [];
         }
         return {
+          cartItemId: it.id,
+          id: it.variantId || it.id,
+          name: it.productName,
+          srcUrl: it.imageUrl ?? "",
+          price: Number(it.priceAtAdd),
+          attributes: attrs,
+          discount: { amount: 0, percentage: 0 },
+          quantity: it.quantity,
+        };
+      });
+
+      const totalQuantities = localItems.reduce(
+        (sum, i) => sum + i.quantity,
+        0,
+      );
+      const totalPrice = localItems.reduce(
+        (sum, i) => sum + i.price * i.quantity,
+        0,
+      );
+      const adjusted = localItems.reduce(
+        (sum, i) => sum + calcAdjustedTotalPrice(0, i, i.quantity),
+        0,
+      );
+
+      state.cart = {
+        items: localItems,
+        totalQuantities,
+      };
+      state.totalPrice = totalPrice;
+      state.adjustedTotalPrice = adjusted;
+      state.action = "update";
+    },
+    // Update server cart item quantity (optimistically or after API success)
+    updateCartItemQuantity: (
+      state,
+      action: PayloadAction<{ cartItemId: string; quantity: number }>,
+    ) => {
+      if (!state.serverCart) return;
+
+      const { cartItemId, quantity } = action.payload;
+      const updatedItems = state.serverCart.items.map((item) =>
+        item.id === cartItemId ? { ...item, quantity } : item,
+      );
+
+      // Recalculate subtotals
+      const recalculatedItems = updatedItems.map((item) => ({
+        ...item,
+        subtotal: Number(item.priceAtAdd) * item.quantity,
+      }));
+
+      const newTotalAmount = recalculatedItems.reduce(
+        (sum, item) => sum + Number(item.subtotal),
+        0,
+      );
+
+      const newTotalItems = recalculatedItems.reduce(
+        (sum, item) => sum + item.quantity,
+        0,
+      );
+
+      state.serverCart = {
+        ...state.serverCart,
+        items: recalculatedItems,
+        totalAmount: newTotalAmount,
+        totalItems: newTotalItems,
+      };
+
+      // Also update local cart
+      const localItems: LocalCartItem[] = recalculatedItems.map((it) => {
+        let attrs: string[] = [];
+        try {
+          const parsed = it.attributes
+            ? (JSON.parse(it.attributes) as Record<string, unknown>)
+            : {};
+          attrs = Object.values(parsed).map((v) => String(v));
+        } catch {
+          attrs = [];
+        }
+        return {
           id: it.variantId || it.id,
           name: it.productName,
           srcUrl: it.imageUrl ?? "",
@@ -257,6 +337,7 @@ export const {
   remove,
   setServerCart,
   hydrateLocalFromServer,
+  updateCartItemQuantity,
 } = cartsSlice.actions;
 
 export default cartsSlice.reducer;

@@ -1,14 +1,23 @@
+import { auth } from "@/lib/auth";
 import { RedisClient } from "@/lib/redis";
 import { GetCartResponse } from "@/types/cart";
 import axios from "axios";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const BACKEND_BASE =
   process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId");
+export async function GET() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const userId = session?.user.id;
   const cacheKey = `cart:userId:${userId}`;
 
   if (!RedisClient.isOpen) {
@@ -20,10 +29,6 @@ export async function GET(req: NextRequest) {
       { error: "BACKEND_URL not configured" },
       { status: 500 },
     );
-  }
-
-  if (!userId) {
-    return NextResponse.json({ error: "userId is required" }, { status: 400 });
   }
 
   // BACKEND_BASE should include /api, e.g. http://localhost:8080/api
@@ -75,19 +80,17 @@ export async function POST(req: NextRequest) {
 
   try {
     // BACKEND_BASE should include /api, e.g. http://localhost:8080/api
-    const res = await fetch(`${BACKEND_BASE}/cart`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      cache: "no-store",
-      body: JSON.stringify({
+    const { data, status } = await axios.post(
+      `${BACKEND_BASE}/cart`,
+      {
         userId: body.userId,
         sessionId: null,
         variantId: body.variantId,
         quantity: body.quantity,
-      }),
-    });
-    const json = await res.json();
-    return NextResponse.json(json, { status: res.status });
+      },
+      { headers: { "content-type": "application/json" } },
+    );
+    return NextResponse.json(data, { status });
   } catch (e) {
     return NextResponse.json(
       { error: "Failed to add to cart" },

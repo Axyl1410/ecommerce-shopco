@@ -1,6 +1,7 @@
 "use client";
 
 import ChatWidget from "@/components/ai-elements/chat-widget";
+import CartSyncer from "@/components/cart/CartSyncer";
 import SpinnerbLoader from "@/components/ui/SpinnerbLoader";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -32,6 +33,7 @@ const Providers = ({ children }: Props) => {
         >
           <Toaster />
           {children}
+          <CartSyncer />
           <ChatWidget />
         </PersistGate>
       </QueryClientProvider>

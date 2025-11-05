@@ -4,12 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { PiTrashFill } from "react-icons/pi";
 import CartCounter from "@/components/ui/CartCounter";
-import { addToCart, type CartItem, remove, removeCartItem } from "@/lib/features/carts/cartsSlice";
+import { addToCart, type LocalCartItem, remove, removeCartItem } from "@/lib/features/carts/cartsSlice";
 import { useAppDispatch } from "@/lib/hooks/redux";
 import { Button } from "../ui/button";
 
 type ProductCardProps = {
-  data: CartItem;
+  data: LocalCartItem;
 };
 
 const ProductCard = ({ data }: ProductCardProps) => {

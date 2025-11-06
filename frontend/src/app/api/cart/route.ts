@@ -55,6 +55,14 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   if (!BACKEND_BASE) {
     return NextResponse.json(
       { error: "BACKEND_URL not configured" },
@@ -65,17 +73,29 @@ export async function POST(req: NextRequest) {
   const body = (await req.json().catch(() => null)) as {
     userId?: string;
     sessionId?: string | null;
-    variantId: string;
-    quantity: number;
+    variantId?: string;
+    quantity?: number;
   } | null;
 
-  if (!body || !body.variantId || !body.quantity || !body.userId) {
+  if (
+    !body ||
+    typeof body.userId !== "string" ||
+    typeof body.variantId !== "string" ||
+    typeof body.quantity !== "number" ||
+    body.quantity <= 0
+  ) {
     return NextResponse.json(
       {
-        error: "Invalid body: require variantId, quantity, and userId",
+        error:
+          "Invalid body: require userId (string), variantId (string), quantity (>0)",
       },
       { status: 400 },
     );
+  }
+
+  // Ensure the userId in body matches the authenticated user
+  if (body.userId !== session.user.id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   try {
@@ -90,6 +110,15 @@ export async function POST(req: NextRequest) {
       },
       { headers: { "content-type": "application/json" } },
     );
+    // Invalidate cache for this user
+    try {
+      if (!RedisClient.isOpen) {
+        await RedisClient.connect();
+      }
+      const cacheKey = `cart:userId:${body.userId}`;
+      await RedisClient.del(cacheKey);
+    } catch {}
+
     return NextResponse.json(data, { status });
   } catch (e) {
     return NextResponse.json(

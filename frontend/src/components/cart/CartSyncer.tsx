@@ -4,13 +4,15 @@ import {
   hydrateLocalFromServer,
   setServerCart,
 } from "@/lib/features/carts/cartsSlice";
-import { useAppDispatch } from "@/lib/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import { GetCartResponse } from "@/types/cart";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 export default function CartSyncer() {
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
+  const localCart = useAppSelector((s) => s.carts.cart);
 
   const profileQuery = useQuery({
     queryKey: ["profile"],
@@ -35,6 +37,36 @@ export default function CartSyncer() {
       if (json?.data) {
         dispatch(setServerCart(json.data));
         dispatch(hydrateLocalFromServer(json.data));
+
+        // Merge local cart into server cart once after login
+        // Strategy: if server cart is empty but local cart has items, push them
+        if (
+          localCart?.items?.length &&
+          (json.data.totalItems === 0 || json.data.items.length === 0)
+        ) {
+          const userId = profileQuery.data?.user?.id;
+          const itemsToAdd = localCart.items.map((it) => ({
+            variantId: String(it.id),
+            quantity: it.quantity,
+          }));
+
+          // Fire-and-forget adds sequentially to keep order minimal; backend sums quantities
+          (async () => {
+            try {
+              for (const item of itemsToAdd) {
+                await axios.post(`/api/cart`, {
+                  userId,
+                  variantId: item.variantId,
+                  quantity: item.quantity,
+                });
+              }
+              // Refetch cart after merge
+              queryClient.invalidateQueries({ queryKey: ["cart", userId] });
+            } catch {
+              // Swallow errors; UI can still show server cart
+            }
+          })();
+        }
       }
     },
     staleTime: 60_000,

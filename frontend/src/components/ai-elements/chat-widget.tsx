@@ -90,7 +90,7 @@ Current page context:
   return (
     <>
       <div
-        className={`fixed bottom-[80px] right-2 z-50 h-full max-h-[min(650px,calc(100%-100px))] w-[calc(100vw-1rem)] max-w-[420px] translate-y-0 rounded-md bg-white shadow-2xl transition-all duration-300 sm:right-4 sm:w-[380px] md:right-5 md:w-[420px] ${
+        className={`fixed bottom-[80px] right-2 z-30 h-full max-h-[min(650px,calc(100%-100px))] w-[calc(100vw-1rem)] max-w-[420px] translate-y-0 rounded-md bg-white shadow-2xl transition-all duration-300 sm:right-4 sm:w-[380px] md:right-5 md:w-[420px] ${
           isOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"

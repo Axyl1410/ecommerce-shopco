@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CartResponseBuilder {
-    
+
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductVariantRepository productVariantRepository;
     private final ProductRepository productRepository;
-    
+
     public CartResponseBuilder(
             CartRepository cartRepository,
             CartItemRepository cartItemRepository,
@@ -31,62 +31,60 @@ public class CartResponseBuilder {
         this.productVariantRepository = productVariantRepository;
         this.productRepository = productRepository;
     }
-    
+
     public CartResponse build(String cartId) {
         Cart cart = cartRepository.findById(cartId)
-            .orElseThrow(() -> new RuntimeException("Cart not found"));
-        
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
         List<CartItem> items = cartItemRepository.findByCartId(cartId);
-        
+
         List<CartItemResponse> itemResponses = items.stream()
-            .map(this::toCartItemResponse)
-            .collect(Collectors.toList());
-        
+                .map(this::toCartItemResponse)
+                .collect(Collectors.toList());
+
         BigDecimal totalAmount = itemResponses.stream()
-            .map(CartItemResponse::subtotal)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
+                .map(CartItemResponse::subtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         Integer totalItems = itemResponses.stream()
-            .map(CartItemResponse::quantity)
-            .reduce(0, Integer::sum);
-        
+                .map(CartItemResponse::quantity)
+                .reduce(0, Integer::sum);
+
         return new CartResponse(
-            cart.getId(),
-            cart.getUserId(),
-            cart.getSessionId(),
-            itemResponses,
-            totalAmount,
-            totalItems,
-            cart.getCreatedAt(),
-            cart.getUpdatedAt()
-        );
+                cart.getId(),
+                cart.getUserId(),
+                cart.getSessionId(),
+                itemResponses,
+                totalAmount,
+                totalItems,
+                cart.getCreatedAt(),
+                cart.getUpdatedAt());
     }
-    
+
     private CartItemResponse toCartItemResponse(CartItem item) {
         BigDecimal subtotal = item.getPriceAtAdd().multiply(new BigDecimal(item.getQuantity()));
-        
+
         // Fetch variant and product information
         ProductVariant variant = productVariantRepository.findById(item.getVariantId())
-            .orElseThrow(() -> new IllegalStateException("Variant not found for cart item: " + item.getVariantId()));
+                .orElseThrow(
+                        () -> new IllegalStateException("Variant not found for cart item: " + item.getVariantId()));
 
         String sku = variant.getSku();
         String attributes = variant.getAttributes() != null ? variant.getAttributes() : "{}";
 
         Product product = productRepository.findById(variant.getProductId()).orElse(null);
         String productName = product != null ? product.getName() : null;
-        
+
         return new CartItemResponse(
-            item.getId(),
-            item.getCartId(),
-            item.getVariantId(),
-            productName,
-            sku,
-            attributes,
-            item.getQuantity(),
-            item.getPriceAtAdd(),
-            subtotal,
-            item.getCreatedAt()
-        );
+                item.getId(),
+                item.getCartId(),
+                item.getVariantId(),
+                productName,
+                sku,
+                attributes,
+                item.getQuantity(),
+                item.getPriceAtAdd(),
+                subtotal,
+                item.getCreatedAt());
     }
 }
-

@@ -37,7 +37,7 @@ export type Address = {
   district: string;
   province: string;
   postalCode?: string | null;
-  isDefault?: boolean; // Theo schema hiện tại chỉ có một cờ mặc định
+  isDefault?: boolean; // According to current schema there is a single default flag
 };
 
 export type AddressUpsertFormValues = {
@@ -52,9 +52,9 @@ export type AddressUpsertFormValues = {
 };
 
 const addressSchema = z.object({
-  name: z.string().min(2, "Tên người nhận không hợp lệ"),
-  phone: z.string().min(8, "SĐT không hợp lệ"),
-  addressLine: z.string().min(3, "Địa chỉ quá ngắn"),
+  name: z.string().min(2, "Recipient name must be at least 2 characters"),
+  phone: z.string().min(8, "Invalid phone number"),
+  addressLine: z.string().min(3, "Address is too short"),
   city: z.string().min(1),
   district: z.string().min(1),
   province: z.string().min(1),
@@ -67,7 +67,7 @@ export type AddressBookProps = {
   onCreate: (payload: AddressUpsertFormValues) => Promise<Address> | Address | void;
   onUpdate: (id: string, payload: AddressUpsertFormValues) => Promise<void> | void;
   onDelete: (id: string) => Promise<void> | void;
-  onSetDefault: (id: string) => Promise<void> | void; // Một cờ mặc định duy nhất
+  onSetDefault: (id: string) => Promise<void> | void; // Single default flag
   creating?: boolean;
   updatingId?: string | null;
   deletingId?: string | null;
@@ -136,18 +136,18 @@ export function AddressBook({
     <Card className="p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Địa chỉ của tôi</h2>
+          <h2 className="text-xl font-semibold">My Addresses</h2>
           <p className="text-sm text-muted-foreground">
-            Quản lý nhiều địa chỉ, đặt địa chỉ giao hàng và thanh toán mặc định
+            Manage multiple addresses and set your default shipping/payment address
           </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button onClick={startCreate}>Thêm địa chỉ</Button>
+            <Button onClick={startCreate}>Add address</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[540px]">
             <DialogHeader>
-              <DialogTitle>{editing ? "Cập nhật địa chỉ" : "Thêm địa chỉ"}</DialogTitle>
+              <DialogTitle>{editing ? "Update address" : "Add address"}</DialogTitle>
             </DialogHeader>
             <Form {...form}>
               <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={submit}>
@@ -156,9 +156,9 @@ export function AddressBook({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Người nhận</FormLabel>
+                      <FormLabel>Recipient</FormLabel>
                       <FormControl>
-                        <Input placeholder="Nguyễn Văn A" {...field} />
+                        <Input placeholder="John Doe" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -170,7 +170,7 @@ export function AddressBook({
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Số điện thoại</FormLabel>
+                      <FormLabel>Phone number</FormLabel>
                       <FormControl>
                         <Input placeholder="0901234567" {...field} />
                       </FormControl>
@@ -184,9 +184,9 @@ export function AddressBook({
                   name="addressLine"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel>Địa chỉ</FormLabel>
+                      <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="Số nhà, đường..." {...field} />
+                        <Input placeholder="Street address..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -198,7 +198,7 @@ export function AddressBook({
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thành phố</FormLabel>
+                      <FormLabel>City</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -212,7 +212,7 @@ export function AddressBook({
                   name="district"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Quận/Huyện</FormLabel>
+                      <FormLabel>District</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -226,7 +226,7 @@ export function AddressBook({
                   name="province"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tỉnh/Thành</FormLabel>
+                      <FormLabel>Province</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -240,9 +240,9 @@ export function AddressBook({
                   name="postalCode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mã bưu chính</FormLabel>
+                      <FormLabel>Postal code</FormLabel>
                       <FormControl>
-                        <Input placeholder="(tuỳ chọn)" {...field} />
+                        <Input placeholder="(optional)" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -254,12 +254,12 @@ export function AddressBook({
                   name="isDefault"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel>Đặt làm địa chỉ mặc định</FormLabel>
+                      <FormLabel>Set as default address</FormLabel>
                       <FormControl>
                         <div className="flex items-center gap-3">
                           <Switch checked={!!field.value} onCheckedChange={field.onChange} />
                           <span className="text-sm text-muted-foreground">
-                            Dùng địa chỉ này mặc định cho tài khoản của bạn
+                            Use this address as your default
                           </span>
                         </div>
                       </FormControl>
@@ -270,10 +270,10 @@ export function AddressBook({
 
                 <div className="md:col-span-2 flex justify-end gap-2 pt-2">
                   <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                    Hủy
+                    Cancel
                   </Button>
                   <Button type="submit">
-                    {editing ? "Lưu thay đổi" : creating ? "Đang thêm..." : "Thêm"}
+                    {editing ? "Save changes" : creating ? "Adding..." : "Add"}
                   </Button>
                 </div>
               </form>
@@ -299,7 +299,7 @@ export function AddressBook({
               </div>
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="ghost" onClick={() => startEdit(a)}>
-                  Sửa
+                  Edit
                 </Button>
                 <Button
                   size="sm"
@@ -308,7 +308,7 @@ export function AddressBook({
                   onClick={() => onDelete?.(a.id)}
                   disabled={deletingId === a.id}
                 >
-                  Xoá
+                  Delete
                 </Button>
               </div>
             </div>
@@ -324,14 +324,14 @@ export function AddressBook({
                 onClick={() => onSetDefault?.(a.id)}
                 disabled={defaultId === a.id}
               >
-                {a.isDefault ? "Địa chỉ mặc định" : "Đặt làm địa chỉ mặc định"}
+                {a.isDefault ? "Default address" : "Set as default"}
               </Button>
             </div>
           </div>
         ))}
 
         {addresses.length === 0 && (
-          <div className="text-sm text-muted-foreground">Chưa có địa chỉ nào. Hãy thêm địa chỉ mới.</div>
+          <div className="text-sm text-muted-foreground">No addresses yet. Add a new address.</div>
         )}
       </div>
     </Card>

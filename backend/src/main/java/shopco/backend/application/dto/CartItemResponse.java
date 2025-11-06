@@ -8,6 +8,7 @@ public record CartItemResponse(
     String cartId,
     String variantId,
     String productName,
+    String imageUrl,
     String sku,
     String attributes,
     Integer quantity,

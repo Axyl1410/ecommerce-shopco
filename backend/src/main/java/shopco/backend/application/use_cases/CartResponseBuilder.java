@@ -74,17 +74,20 @@ public class CartResponseBuilder {
 
         Product product = productRepository.findById(variant.getProductId()).orElse(null);
         String productName = product != null ? product.getName() : null;
-
+        String imageUrl = product != null ? product.getDefaultImage() : null;
+        
         return new CartItemResponse(
-                item.getId(),
-                item.getCartId(),
-                item.getVariantId(),
-                productName,
-                sku,
-                attributes,
-                item.getQuantity(),
-                item.getPriceAtAdd(),
-                subtotal,
-                item.getCreatedAt());
+            item.getId(),
+            item.getCartId(),
+            item.getVariantId(),
+            productName,
+            imageUrl,
+            sku,
+            attributes,
+            item.getQuantity(),
+            item.getPriceAtAdd(),
+            subtotal,
+            item.getCreatedAt()
+        );
     }
 }

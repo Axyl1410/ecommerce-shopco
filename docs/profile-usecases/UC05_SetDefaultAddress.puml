@@ -1,0 +1,45 @@
+@startuml UC05_SetDefaultAddress
+' UC-05: Set Default Address
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam DefaultFontName Arial
+left to right direction
+
+package "Entities Circle" as EC {
+  class Address
+  class User
+}
+
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
+    +execute(req: SetDefaultAddressRequest): AddressDTO
+  }
+  class SetDefaultAddressRequest
+  class AddressDTO
+
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
+}
+
+package "Interface Adapters" as IA {
+  class ProfileController { +setDefaultAddress(id) }
+  class AddressPresenter { +present(res: AddressDTO) }
+  class AddressDTO
+}
+
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
+}
+
+ProfileController --> InputBoundary : execute(SetDefaultAddressRequest)
+ProfileService --> AddressRepository : clear default for user
+ProfileService --> AddressRepository : set isDefault=true for id
+ProfileService --> OutputBoundary : present(AddressDTO)
+OutputBoundary <.. AddressPresenter
+AddressPresenter --> AddressDTO
+ProfileController <-- AddressDTO : HTTP JSON
+
+@enduml

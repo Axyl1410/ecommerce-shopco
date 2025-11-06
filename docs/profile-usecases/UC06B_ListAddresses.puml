@@ -1,0 +1,44 @@
+@startuml UC06B_ListAddresses
+' UC-06B: List Addresses
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam DefaultFontName Arial
+left to right direction
+
+package "Entities Circle" as EC {
+  class Address
+}
+
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
+    +execute(req: ListAddressesRequest): AddressDTOList
+  }
+  class ListAddressesRequest
+  class AddressDTO
+  class AddressDTOList
+
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
+}
+
+package "Interface Adapters" as IA {
+  class ProfileController { +listAddresses() }
+  class AddressPresenter { +present(res: AddressDTOList) }
+  class AddressDTO
+}
+
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
+}
+
+ProfileController --> InputBoundary : execute(ListAddressesRequest)
+ProfileService --> AddressRepository : find by user ordered by default desc, createdAt desc
+ProfileService --> OutputBoundary : present(AddressDTOList)
+OutputBoundary <.. AddressPresenter
+AddressPresenter --> AddressDTO
+ProfileController <-- AddressDTO : HTTP JSON
+
+@enduml

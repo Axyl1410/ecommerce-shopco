@@ -1,0 +1,44 @@
+@startuml UC02_ViewProfile
+' UC-02: View Profile
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam DefaultFontName Arial
+left to right direction
+
+package "Entities Circle" as EC {
+  class User
+}
+
+package "Use Case Circle" as UC {
+  interface InputBoundary
+  interface OutputBoundary
+  class ProfileService {
+    +execute(req: ViewProfileRequestModel): ViewProfileResponseModel
+  }
+  class ViewProfileRequestModel
+  class ViewProfileResponseModel
+
+  InputBoundary <|.. ProfileService
+  ProfileService ..|> OutputBoundary
+}
+
+package "Interface Adapters" as IA {
+  class ProfileController { +getProfile() }
+  class ProfilePresenter { +present(res: ViewProfileResponseModel) }
+  class UserProfileDTO
+}
+
+package "Frameworks & Drivers" as FD {
+  class "Spring Boot MVC" as Spring
+  class "DB (Postgres/H2)\nJPA/Hibernate" as DB
+  class "HTTP/JSON Client (Frontend)"
+}
+
+ProfileController --> InputBoundary : execute(ViewProfileRequestModel)
+ProfileService --> UserRepository : find user by id
+ProfileService --> OutputBoundary : present(ViewProfileResponseModel)
+OutputBoundary <.. ProfilePresenter
+ProfilePresenter --> UserProfileDTO
+ProfileController <-- UserProfileDTO : HTTP JSON
+
+@enduml

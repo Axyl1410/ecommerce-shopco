@@ -9,9 +9,9 @@ const CheckoutBodySchema = z.object({
   order_amount: z.number(),
   currency: z.enum(["VND", "USD"]),
   order_description: z.string().optional(),
-  success_url: z.string().url(),
-  error_url: z.string().url(),
-  cancel_url: z.string().url(),
+  success_url: z.string(),
+  error_url: z.string(),
+  cancel_url: z.string(),
 });
 
 export async function POST(req: Request) {

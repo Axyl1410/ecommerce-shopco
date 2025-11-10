@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shopco.backend.application.dto.ProductSearchRequest;
 import shopco.backend.application.dto.ProductSearchResponse;
+import shopco.backend.application.dto.ProductListRequest;
 import shopco.backend.application.interfaces.IProductService;
 
 import java.util.HashMap;
@@ -27,6 +28,33 @@ public class ProductController {
         response.put("message", "ProductController is alive");
         response.put("data", null);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Map<String, Object>> getAllProducts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "12") int limit,
+            @RequestParam(required = false) String categoryId,
+            @RequestParam(required = false) String brandId,
+            @RequestParam(required = false) String status) {
+        try {
+            ProductListRequest request = new ProductListRequest(page, limit, categoryId, brandId, status);
+            ProductSearchResponse response = productService.getAllProducts(request);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("result", "SUCCESS");
+            result.put("message", "Products retrieved successfully");
+            result.put("data", response);
+
+            return ResponseEntity.ok(result);
+        } catch (RuntimeException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("result", "ERROR");
+            errorResponse.put("message", "An error occurred while retrieving products");
+            errorResponse.put("data", null);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     @GetMapping("/search")

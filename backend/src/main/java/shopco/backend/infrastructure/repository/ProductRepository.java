@@ -11,13 +11,23 @@ import shopco.backend.infrastructure.model.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String> {
 
-    @Query("SELECT DISTINCT p FROM Product p " +
-            "WHERE (LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "   OR LOWER(p.description) LIKE LOWER(CONCAT('%', :query, '%'))) " +
-            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
-            "AND (:brandId IS NULL OR p.brandId = :brandId)")
-    Page<Product> searchProducts(@Param("query") String query,
-            @Param("categoryId") String categoryId,
-            @Param("brandId") String brandId,
-            Pageable pageable);
+        @Query("SELECT DISTINCT p FROM Product p " +
+                        "WHERE (LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')) " +
+                        "   OR LOWER(p.description) LIKE LOWER(CONCAT('%', :query, '%'))) " +
+                        "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
+                        "AND (:brandId IS NULL OR p.brandId = :brandId)")
+        Page<Product> searchProducts(@Param("query") String query,
+                        @Param("categoryId") String categoryId,
+                        @Param("brandId") String brandId,
+                        Pageable pageable);
+
+        @Query("SELECT DISTINCT p FROM Product p " +
+                        "WHERE (:categoryId IS NULL OR p.categoryId = :categoryId) " +
+                        "AND (:brandId IS NULL OR p.brandId = :brandId) " +
+                        "AND (:status IS NULL OR CAST(p.status AS string) = :status) " +
+                        "ORDER BY p.createdAt DESC")
+        Page<Product> findAllProducts(@Param("categoryId") String categoryId,
+                        @Param("brandId") String brandId,
+                        @Param("status") String status,
+                        Pageable pageable);
 }

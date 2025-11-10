@@ -40,6 +40,23 @@ public class ProductRepositoryAdapter implements IProductRepository {
         return productPage.getTotalElements();
     }
 
+    @Override
+    public List<ProductEntity> findAllProducts(String categoryId, String brandId, String status, int page, int limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        Page<Product> productPage = productRepository.findAllProducts(categoryId, brandId, status, pageable);
+
+        return productPage.getContent().stream()
+                .map(this::convertToEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public long countAllProducts(String categoryId, String brandId, String status) {
+        Pageable pageable = PageRequest.of(0, 1);
+        Page<Product> productPage = productRepository.findAllProducts(categoryId, brandId, status, pageable);
+        return productPage.getTotalElements();
+    }
+
     private ProductEntity convertToEntity(Product product) {
         ProductEntity entity = new ProductEntity();
         entity.setId(product.getId());

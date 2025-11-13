@@ -1,0 +1,177 @@
+@startuml UC06_ViewProductDetails
+!define ENTITY_COLOR #FFE0B2
+!define USECASE_COLOR #B3E5FC
+!define INTERFACE_COLOR #C8E6C9
+!define FRAMEWORK_COLOR #F0F0F0
+
+title UC06: View Product Details - Clean Architecture
+
+package "Entities (Domain)" <<Rectangle>> ENTITY_COLOR {
+  class ProductEntity {
+    +id: UUID
+    +name: String
+    +slug: String
+    +description: String
+    +defaultImage: String
+    +categoryId: UUID
+    +brandId: UUID
+    +status: ProductStatus
+  }
+  
+  class ProductVariant {
+    +id: UUID
+    +productId: UUID
+    +sku: String
+    +price: BigDecimal
+    +salePrice: BigDecimal
+    +color: String
+    +size: String
+    +stock: int
+  }
+  
+  class ProductImage {
+    +id: UUID
+    +productId: UUID
+    +imageUrl: String
+    +displayOrder: int
+  }
+  
+  class Review {
+    +id: UUID
+    +productId: UUID
+    +userId: UUID
+    +rating: int
+    +comment: String
+  }
+}
+
+package "Use Cases (Application Logic)" <<Rectangle>> USECASE_COLOR {
+  interface "IProductRepository\n<<Input Boundary>>" as IProductRepo {
+    +findBySlug(slug): ProductEntity
+  }
+  
+  class GetProductDetailsUseCase {
+    +execute(slug: String): ProductDetailDto
+    -loadVariants(productId): List<VariantDto>
+    -loadImages(productId): List<ImageDto>
+    -loadReviews(productId): List<ReviewDto>
+  }
+  
+  note right of GetProductDetailsUseCase
+    Business Rules:
+    - Product must exist (throw 404 if not)
+    - Product must be ACTIVE for customers
+    - Load all related data:
+      * Product variants (colors, sizes, prices)
+      * Product images (ordered by displayOrder)
+      * Product reviews (with pagination)
+      * Category and brand names
+      * Product tags
+    - Calculate average rating
+    - Return breadcrumb data for navigation
+  end note
+}
+
+package "Interface Adapters" <<Rectangle>> INTERFACE_COLOR {
+  class ProductController {
+    +getProductBySlug(slug): ResponseEntity
+  }
+  
+  class ProductDetailDto {
+    +id: UUID
+    +name: String
+    +slug: String
+    +description: String
+    +categoryName: String
+    +brandName: String
+    +variants: List<VariantDto>
+    +images: List<ImageDto>
+    +reviews: List<ReviewDto>
+    +averageRating: double
+    +totalReviews: int
+    +tags: List<String>
+  }
+  
+  class VariantDto {
+    +id: UUID
+    +sku: String
+    +price: BigDecimal
+    +salePrice: BigDecimal
+    +color: String
+    +size: String
+    +stock: int
+  }
+  
+  class "Frontend Product\nDetail Page" as ProductPage {
+    +BreadcrumbProduct
+    +PhotoSection
+    +AddToCartSection
+    +ColorSelection
+    +SizeSelection
+    +ProductDetails Tab
+    +Reviews Tab
+    +FAQ Tab
+  }
+}
+
+package "Frameworks & Drivers" <<Rectangle>> FRAMEWORK_COLOR {
+  class ProductRepositoryAdapter {
+    +findBySlug(slug)
+  }
+  
+  class ProductVariantRepository {
+    +findByProductId(productId)
+  }
+  
+  class ProductImageRepository {
+    +findByProductIdOrderByDisplayOrder(productId)
+  }
+  
+  class ReviewRepository {
+    +findByProductId(productId, pageable)
+  }
+  
+  database "PostgreSQL\nJOIN Queries" as DB {
+    SELECT * FROM products WHERE slug = ?
+    ---
+    SELECT * FROM product_variants WHERE product_id = ?
+    ---
+    SELECT * FROM product_images WHERE product_id = ? ORDER BY display_order
+    ---
+    SELECT * FROM reviews WHERE product_id = ?
+  }
+  
+  class "Spring MVC\nHTTP Request" as HTTP
+  
+  class "Next.js Client\nProduct Page" as Client {
+    /shop/product/[category]/[slug]
+    Server-side rendering (SSR)
+  }
+}
+
+' Relationships
+Client --> HTTP : GET /api/products/{slug}
+HTTP --> ProductController : getProductBySlug(slug)
+ProductController --> GetProductDetailsUseCase : execute(slug)
+GetProductDetailsUseCase --> IProductRepo : findBySlug(slug)
+GetProductDetailsUseCase --> ProductVariantRepository : findByProductId()
+GetProductDetailsUseCase --> ProductImageRepository : findByProductId()
+GetProductDetailsUseCase --> ReviewRepository : findByProductId()
+IProductRepo <|.. ProductRepositoryAdapter : implements
+ProductRepositoryAdapter --> DB : SELECT query
+ProductVariantRepository --> DB : SELECT variants
+ProductImageRepository --> DB : SELECT images
+ReviewRepository --> DB : SELECT reviews
+GetProductDetailsUseCase ..> ProductDetailDto : returns
+ProductController ..> Client : JSON Response
+
+Client o-- ProductPage : displays product details
+
+GetProductDetailsUseCase ..> ProductEntity : reads
+GetProductDetailsUseCase ..> ProductVariant : loads
+GetProductDetailsUseCase ..> ProductImage : loads
+GetProductDetailsUseCase ..> Review : loads
+
+ProductDetailDto *-- VariantDto : contains
+
+@enduml

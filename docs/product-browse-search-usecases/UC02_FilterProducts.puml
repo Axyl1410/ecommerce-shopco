@@ -1,0 +1,119 @@
+@startuml UC02_FilterProducts
+!define ENTITY_COLOR #FFE0B2
+!define USECASE_COLOR #B3E5FC
+!define INTERFACE_COLOR #C8E6C9
+!define FRAMEWORK_COLOR #F0F0F0
+
+title UC02: Filter Products - Clean Architecture
+
+package "Entities (Domain)" <<Rectangle>> ENTITY_COLOR {
+  class ProductEntity {
+    +id: UUID
+    +name: String
+    +categoryId: UUID
+    +brandId: UUID
+    +status: ProductStatus
+  }
+  
+  class ProductVariant {
+    +productId: UUID
+    +price: BigDecimal
+    +color: String
+    +size: String
+  }
+  
+  class ProductTag {
+    +productId: UUID
+    +tagId: UUID
+  }
+}
+
+package "Use Cases (Application Logic)" <<Rectangle>> USECASE_COLOR {
+  interface "IProductRepository\n<<Input Boundary>>" as IProductRepo {
+    +findAllProducts(categoryId, brandId, status, page, limit)
+    +countAllProducts(categoryId, brandId, status)
+  }
+  
+  class GetAllProductsUseCase {
+    +execute(request: ProductListRequest): ProductSearchResponse
+  }
+  
+  note right of GetAllProductsUseCase
+    Filter Business Rules:
+    - Category filter: exact match on categoryId
+    - Brand filter: exact match on brandId
+    - Status filter: ACTIVE, INACTIVE, DRAFT
+    - Price filter: applied client-side or via variants
+    - Color/Size filter: applied via product variants
+    - Tags filter: applied via product tags
+    - Multiple filters combine with AND logic
+  end note
+}
+
+package "Interface Adapters" <<Rectangle>> INTERFACE_COLOR {
+  class ProductController {
+    +getAllProducts(page, limit, categoryId, brandId, status)
+  }
+  
+  class ProductListRequest {
+    +page: int
+    +limit: int
+    +categoryId: String
+    +brandId: String
+    +status: String
+  }
+  
+  class ProductSearchResponse {
+    +products: List<ProductDto>
+    +pagination: PaginationDto
+  }
+  
+  class "Frontend Filters\nComponent" as Filters {
+    +CategoriesSection
+    +BrandSection
+    +PriceSection
+    +ColorsSection
+    +SizeSection
+    +DressStyleSection
+  }
+}
+
+package "Frameworks & Drivers" <<Rectangle>> FRAMEWORK_COLOR {
+  class ProductRepositoryAdapter {
+    +findAllProducts(...)
+  }
+  
+  database "PostgreSQL\nFiltered Query" as DB {
+    WHERE category_id = ?
+    AND brand_id = ?
+    AND status = ?
+  }
+  
+  class "Spring MVC\nHTTP Request" as HTTP
+  
+  class "Next.js Client\nwith useProducts hook" as Client {
+    filters: {
+      category, brand,
+      minPrice, maxPrice,
+      colors[], sizes[], tags[]
+    }
+  }
+}
+
+' Relationships
+Client --> HTTP : GET /api/products?categoryId=...&brandId=...
+HTTP --> ProductController : with query params
+ProductController --> GetAllProductsUseCase : execute(request)
+GetAllProductsUseCase --> IProductRepo : findAllProducts(filters)
+IProductRepo <|.. ProductRepositoryAdapter : implements
+ProductRepositoryAdapter --> DB : JPA Criteria Query
+GetAllProductsUseCase ..> ProductSearchResponse : filtered results
+ProductController ..> Client : JSON Response
+
+Client o-- Filters : user selects filters
+
+GetAllProductsUseCase ..> ProductEntity : reads
+GetAllProductsUseCase ..> ProductVariant : price/color/size filtering
+GetAllProductsUseCase ..> ProductTag : tag filtering
+
+@enduml

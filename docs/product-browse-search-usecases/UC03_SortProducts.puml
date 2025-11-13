@@ -1,0 +1,118 @@
+@startuml UC03_SortProducts
+!define ENTITY_COLOR #FFE0B2
+!define USECASE_COLOR #B3E5FC
+!define INTERFACE_COLOR #C8E6C9
+!define FRAMEWORK_COLOR #F0F0F0
+
+title UC03: Sort Products - Clean Architecture
+
+package "Entities (Domain)" <<Rectangle>> ENTITY_COLOR {
+  class ProductEntity {
+    +id: UUID
+    +name: String
+    +createdAt: Instant
+    +updatedAt: Instant
+  }
+  
+  class ProductVariant {
+    +price: BigDecimal
+    +salePrice: BigDecimal
+  }
+  
+  note "Sorting can be applied to:\n- price (from variants)\n- rating (aggregated)\n- name (alphabetical)\n- createdAt (date)\n- popularity (view count)" as sortNote
+}
+
+package "Use Cases (Application Logic)" <<Rectangle>> USECASE_COLOR {
+  interface "IProductRepository\n<<Input Boundary>>" as IProductRepo {
+    +findAllProducts(categoryId, brandId, status, page, limit)
+  }
+  
+  class GetAllProductsUseCase {
+    +execute(request: ProductListRequest): ProductSearchResponse
+  }
+  
+  note right of GetAllProductsUseCase
+    Sort Business Rules:
+    - Default: createdAt DESC (newest first)
+    - Supported fields:
+      * price (ASC/DESC)
+      * rating (ASC/DESC)
+      * name (ASC/DESC)
+      * createdAt (ASC/DESC)
+      * popularity (DESC)
+    - Sort order: ASC or DESC
+    - Sorting is applied in repository layer
+  end note
+}
+
+package "Interface Adapters" <<Rectangle>> INTERFACE_COLOR {
+  class ProductController {
+    +getAllProducts(page, limit, categoryId, brandId, status)
+  }
+  
+  class ProductListRequest {
+    +page: int
+    +limit: int
+    +sortBy: String
+    +sortOrder: String
+  }
+  
+  class ProductSearchResponse {
+    +products: List<ProductDto>
+  }
+  
+  class "Frontend Sort\nSelect Component" as SortSelect {
+    Options:
+    - Newest
+    - Most Popular
+    - Price: Low to High
+    - Price: High to Low
+    - Highest Rated
+    - Name: A to Z
+    - Name: Z to A
+  }
+}
+
+package "Frameworks & Drivers" <<Rectangle>> FRAMEWORK_COLOR {
+  class ProductRepositoryAdapter {
+    +findAllProducts(...)
+  }
+  
+  database "PostgreSQL\nORDER BY Clause" as DB {
+    ORDER BY 
+      price ASC/DESC,
+      rating ASC/DESC,
+      name ASC/DESC,
+      created_at ASC/DESC
+  }
+  
+  class "Spring MVC\nHTTP Request" as HTTP
+  
+  class "Next.js Client\nuseProducts hook" as Client {
+    sort: {
+      sortBy: 'price',
+      sortOrder: 'asc'
+    }
+    updateSort(newSort)
+  }
+}
+
+' Relationships
+Client --> HTTP : GET /api/products?sortBy=price&sortOrder=asc
+HTTP --> ProductController : with sort params
+ProductController --> GetAllProductsUseCase : execute(request)
+GetAllProductsUseCase --> IProductRepo : findAllProducts() with sort
+IProductRepo <|.. ProductRepositoryAdapter : implements
+ProductRepositoryAdapter --> DB : JPA Query with ORDER BY
+GetAllProductsUseCase ..> ProductSearchResponse : sorted results
+ProductController ..> Client : JSON Response
+
+Client o-- SortSelect : user selects sort option
+
+GetAllProductsUseCase ..> ProductEntity : reads sorted
+GetAllProductsUseCase ..> ProductVariant : for price sorting
+
+sortNote .. ProductEntity
+sortNote .. ProductVariant
+
+@enduml

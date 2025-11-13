@@ -1,0 +1,144 @@
+@startuml UC01_BrowseProducts
+!define ENTITY_COLOR #FFE0B2
+!define USECASE_COLOR #B3E5FC
+!define INTERFACE_COLOR #C8E6C9
+!define FRAMEWORK_COLOR #F0F0F0
+
+title UC01: Browse Products - Clean Architecture
+
+package "Entities (Domain)" <<Rectangle>> ENTITY_COLOR {
+  class ProductEntity {
+    +id: UUID
+    +name: String
+    +slug: String
+    +description: String
+    +defaultImage: String
+    +categoryId: UUID
+    +brandId: UUID
+    +status: ProductStatus
+    +createdAt: Instant
+    +updatedAt: Instant
+  }
+  
+  class ProductVariant {
+    +id: UUID
+    +productId: UUID
+    +price: BigDecimal
+    +salePrice: BigDecimal
+    +color: String
+    +size: String
+    +stock: int
+  }
+  
+  class Category {
+    +id: UUID
+    +name: String
+    +slug: String
+  }
+  
+  class Brand {
+    +id: UUID
+    +name: String
+    +slug: String
+  }
+}
+
+package "Use Cases (Application Logic)" <<Rectangle>> USECASE_COLOR {
+  interface "IProductRepository\n<<Input Boundary>>" as IProductRepo {
+    +findAllProducts(categoryId, brandId, status, page, limit)
+    +countAllProducts(categoryId, brandId, status)
+  }
+  
+  class GetAllProductsUseCase {
+    +execute(request: ProductListRequest): ProductSearchResponse
+    -convertToDto(entity: ProductEntity): ProductDto
+  }
+  
+  note right of GetAllProductsUseCase
+    Business Rules:
+    - Default pagination: page=1, limit=12
+    - Calculate price range from variants
+    - Retrieve category and brand names
+    - Collect product tags
+    - Only return ACTIVE products by default
+  end note
+}
+
+package "Interface Adapters" <<Rectangle>> INTERFACE_COLOR {
+  class ProductController {
+    +getAllProducts(page, limit, categoryId, brandId, status): ResponseEntity
+  }
+  
+  class ProductListRequest {
+    +page: int
+    +limit: int
+    +categoryId: String
+    +brandId: String
+    +status: String
+  }
+  
+  class ProductSearchResponse {
+    +products: List<ProductDto>
+    +pagination: PaginationDto
+  }
+  
+  class ProductDto {
+    +id: UUID
+    +name: String
+    +slug: String
+    +defaultImage: String
+    +categoryName: String
+    +brandName: String
+    +minPrice: BigDecimal
+    +maxPrice: BigDecimal
+    +totalVariants: int
+    +tags: List<String>
+  }
+  
+  class PaginationDto {
+    +page: int
+    +limit: int
+    +totalCount: long
+    +totalPages: int
+    +hasNextPage: boolean
+    +hasPrevPage: boolean
+  }
+}
+
+package "Frameworks & Drivers" <<Rectangle>> FRAMEWORK_COLOR {
+  class ProductRepositoryAdapter {
+    +findAllProducts(...)
+    +countAllProducts(...)
+  }
+  
+  database "PostgreSQL\nDatabase" as DB {
+  }
+  
+  class "Spring MVC\nHTTP Request" as HTTP
+  
+  class "Next.js\nClient (React)" as Client {
+    +ShopPage.tsx
+    +ProductCard.tsx
+    +Filters.tsx
+    +Pagination.tsx
+  }
+}
+
+' Relationships
+HTTP --> ProductController : GET /api/products
+ProductController --> GetAllProductsUseCase : execute(request)
+GetAllProductsUseCase --> IProductRepo : findAllProducts()
+IProductRepo <|.. ProductRepositoryAdapter : implements
+ProductRepositoryAdapter --> DB : JPA Query
+GetAllProductsUseCase ..> ProductSearchResponse : returns
+ProductController ..> Client : JSON Response
+
+GetAllProductsUseCase ..> ProductEntity : reads
+GetAllProductsUseCase ..> ProductVariant : reads
+GetAllProductsUseCase ..> Category : reads
+GetAllProductsUseCase ..> Brand : reads
+
+ProductSearchResponse *-- ProductDto
+ProductSearchResponse *-- PaginationDto
+
+@enduml

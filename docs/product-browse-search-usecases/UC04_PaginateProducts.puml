@@ -1,0 +1,123 @@
+@startuml UC04_PaginateProducts
+!define ENTITY_COLOR #FFE0B2
+!define USECASE_COLOR #B3E5FC
+!define INTERFACE_COLOR #C8E6C9
+!define FRAMEWORK_COLOR #F0F0F0
+
+title UC04: Paginate Products - Clean Architecture
+
+package "Entities (Domain)" <<Rectangle>> ENTITY_COLOR {
+  class ProductEntity {
+    +id: UUID
+    +name: String
+    (... other fields)
+  }
+  
+  note "Pagination is independent\nof entity structure" as pageNote
+}
+
+package "Use Cases (Application Logic)" <<Rectangle>> USECASE_COLOR {
+  interface "IProductRepository\n<<Input Boundary>>" as IProductRepo {
+    +findAllProducts(categoryId, brandId, status, page, limit)
+    +countAllProducts(categoryId, brandId, status)
+  }
+  
+  class GetAllProductsUseCase {
+    +execute(request: ProductListRequest): ProductSearchResponse
+  }
+  
+  note right of GetAllProductsUseCase
+    Pagination Business Rules:
+    - Default: page=1, limit=12
+    - Page numbers start at 1
+    - Calculate totalPages = ceil(totalCount / limit)
+    - hasNextPage = page < totalPages
+    - hasPrevPage = page > 1
+    - Use OFFSET/LIMIT for pagination
+    - Return pagination metadata
+  end note
+}
+
+package "Interface Adapters" <<Rectangle>> INTERFACE_COLOR {
+  class ProductController {
+    +getAllProducts(page, limit, categoryId, brandId, status)
+  }
+  
+  class ProductListRequest {
+    +page: int = 1
+    +limit: int = 12
+  }
+  
+  class ProductSearchResponse {
+    +products: List<ProductDto>
+    +pagination: PaginationDto
+  }
+  
+  class PaginationDto {
+    +page: int
+    +limit: int
+    +totalCount: long
+    +totalPages: int
+    +hasNextPage: boolean
+    +hasPrevPage: boolean
+  }
+  
+  class "Frontend Pagination\nComponent" as PaginationUI {
+    +PreviousButton
+    +PageNumbers
+    +EllipsisIndicator
+    +NextButton
+    +goToPage(pageNumber)
+  }
+}
+
+package "Frameworks & Drivers" <<Rectangle>> FRAMEWORK_COLOR {
+  class ProductRepositoryAdapter {
+    +findAllProducts(...)
+    +countAllProducts(...)
+  }
+  
+  database "PostgreSQL\nLIMIT/OFFSET" as DB {
+    SELECT * FROM products
+    WHERE ...
+    ORDER BY ...
+    LIMIT ? OFFSET ?
+    ---
+    SELECT COUNT(*) FROM products
+    WHERE ...
+  }
+  
+  class "Spring MVC\nHTTP Request" as HTTP
+  
+  class "Next.js Client\nuseProducts hook" as Client {
+    pagination: {
+      page: 1,
+      limit: 12
+    }
+    goToPage(n)
+    nextPage()
+    prevPage()
+  }
+}
+
+' Relationships
+Client --> HTTP : GET /api/products?page=2&limit=12
+HTTP --> ProductController : with pagination params
+ProductController --> GetAllProductsUseCase : execute(request)
+GetAllProductsUseCase --> IProductRepo : findAllProducts(page, limit)
+GetAllProductsUseCase --> IProductRepo : countAllProducts()
+IProductRepo <|.. ProductRepositoryAdapter : implements
+ProductRepositoryAdapter --> DB : LIMIT/OFFSET query
+ProductRepositoryAdapter --> DB : COUNT query
+GetAllProductsUseCase ..> ProductSearchResponse : with pagination
+ProductController ..> Client : JSON Response
+
+Client o-- PaginationUI : user clicks page
+
+ProductSearchResponse *-- PaginationDto : contains
+
+GetAllProductsUseCase ..> ProductEntity : reads paginated
+
+pageNote .. ProductEntity
+
+@enduml

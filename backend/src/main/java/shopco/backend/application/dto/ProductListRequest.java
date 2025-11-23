@@ -12,12 +12,14 @@ public class ProductListRequest {
 
     private String categoryId;
     private String brandId;
-    private String status; /**
+    private String status;
+
+    /**
      * Creates a ProductListRequest with default pagination values.
      *
      * Initializes `page` to 1 and `limit` to 10.
      */
-
+    public ProductListRequest() {
     public ProductListRequest() {
         this.page = 1;
         this.limit = 10;

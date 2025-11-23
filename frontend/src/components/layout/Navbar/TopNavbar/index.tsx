@@ -108,7 +108,11 @@ const TopNavbar = async () => {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-        <form action="/search" method="get" className="mr-3 hidden md:flex lg:mr-10">
+        <form
+          action="/search"
+          method="get"
+          className="mr-3 hidden w-full md:flex lg:mr-10"
+        >
           <InputGroup className="bg-[#F0F0F0]">
             <InputGroup.Text>
               <Image

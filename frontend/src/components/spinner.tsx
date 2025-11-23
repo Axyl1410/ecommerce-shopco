@@ -1,5 +1,12 @@
 import SpinnerbLoader from "./ui/SpinnerbLoader";
 
+/**
+ * Displays a full-screen centered loading spinner overlay.
+ *
+ * Renders a fixed, full-viewport container that centers a SpinnerbLoader component.
+ *
+ * @returns A JSX element containing the overlay and centered spinner.
+ */
 export default function Spinner() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">

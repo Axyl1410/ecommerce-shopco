@@ -9,6 +9,15 @@ import { GetCartResponse } from "@/types/cart";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
+/**
+ * Synchronizes the Redux local cart with the server cart when the user's profile and cart are loaded.
+ *
+ * On successful cart fetch, updates the store with the server cart and hydrates the local cart. If the server
+ * cart is empty but the local cart contains items, it sequentially posts those items to the server (fire-and-forget)
+ * and then invalidates the cart query to trigger a refetch; any errors during this merge are ignored.
+ *
+ * @returns `null` — this component does not render any UI.
+ */
 export default function CartSyncer() {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();

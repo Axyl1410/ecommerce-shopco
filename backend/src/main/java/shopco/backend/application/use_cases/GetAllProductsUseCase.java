@@ -27,6 +27,9 @@ public class GetAllProductsUseCase {
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
 
+    /**
+     * Create a GetAllProductsUseCase wired with the required repository dependencies.
+     */
     public GetAllProductsUseCase(
             IProductRepository productRepository,
             ProductVariantRepository productVariantRepository,
@@ -42,6 +45,16 @@ public class GetAllProductsUseCase {
         this.tagRepository = tagRepository;
     }
 
+    /**
+     * Retrieves products matching the provided filters and returns them with pagination metadata.
+     *
+     * <p>Filters and pagination values are taken from the given request: categoryId, brandId, status,
+     * page, and limit. Each returned product is converted to a ProductDto containing resolved brand,
+     * category, price range, variants count, and tags.</p>
+     *
+     * @param request container of filter and pagination parameters (categoryId, brandId, status, page, limit)
+     * @return a ProductSearchResponse containing the list of matching ProductDto objects and pagination info
+     */
     public ProductSearchResponse execute(ProductListRequest request) {
         // Get all products with filters
         List<ProductEntity> productEntities = productRepository.findAllProducts(
@@ -71,6 +84,15 @@ public class GetAllProductsUseCase {
         return new ProductSearchResponse(productDtos, pagination);
     }
 
+    /**
+     * Convert a ProductEntity into a ProductDto populated with core fields, resolved category and brand names,
+     * variant price range and count, and tag names.
+     *
+     * @param entity the product entity to convert
+     * @return a ProductDto containing id, name, slug, description, default image, categoryId, brandId, status,
+     *         categoryName and brandName (if available), minPrice and maxPrice (derived from variants, or zero if none),
+     *         totalVariants, and a list of tag names (empty if none)
+     */
     private ProductDto convertToDto(ProductEntity entity) {
         ProductDto dto = new ProductDto();
         dto.setId(entity.getId());

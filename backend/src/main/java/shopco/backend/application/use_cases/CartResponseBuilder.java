@@ -21,6 +21,9 @@ public class CartResponseBuilder {
     private final ProductVariantRepository productVariantRepository;
     private final ProductRepository productRepository;
 
+    /**
+     * Creates a CartResponseBuilder wired with the repositories required to assemble cart responses.
+     */
     public CartResponseBuilder(
             CartRepository cartRepository,
             CartItemRepository cartItemRepository,
@@ -32,6 +35,14 @@ public class CartResponseBuilder {
         this.productRepository = productRepository;
     }
 
+    /**
+     * Builds a CartResponse by aggregating the cart, its items, and related product/variant information.
+     *
+     * @param cartId the identifier of the cart to build the response for
+     * @return a CartResponse containing cart identity, user/session info, a list of item responses,
+     *         the total monetary amount, the total number of items, and the cart's creation and update timestamps
+     * @throws RuntimeException if no cart exists with the provided id
+     */
     public CartResponse build(String cartId) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
@@ -61,6 +72,17 @@ public class CartResponseBuilder {
                 cart.getUpdatedAt());
     }
 
+    /**
+     * Build a CartItemResponse from a CartItem, enriching it with variant and product data.
+     *
+     * The returned response includes the item's id, cart id, variant id, product name (nullable),
+     * product image URL (nullable), SKU, variant attributes (defaults to "{}" when absent),
+     * quantity, price at add, computed subtotal (priceAtAdd × quantity), and the item's creation time.
+     *
+     * @param item the cart item to convert and enrich
+     * @return a populated CartItemResponse representing the cart item with product/variant details
+     * @throws IllegalStateException if the referenced product variant cannot be found
+     */
     private CartItemResponse toCartItemResponse(CartItem item) {
         BigDecimal subtotal = item.getPriceAtAdd().multiply(new BigDecimal(item.getQuantity()));
 

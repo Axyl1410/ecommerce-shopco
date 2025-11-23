@@ -33,6 +33,14 @@ public class ProductRepositoryAdapter implements IProductRepository {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Obtain the total number of products matching the given search filters.
+     *
+     * @param query      full-text search query to match against product fields
+     * @param categoryId filter by category identifier (may be null or empty to disable)
+     * @param brandId    filter by brand identifier (may be null or empty to disable)
+     * @return           the total number of products that match the provided filters
+     */
     @Override
     public long countSearchResults(String query, String categoryId, String brandId) {
         Pageable pageable = PageRequest.of(0, 1);
@@ -40,6 +48,16 @@ public class ProductRepositoryAdapter implements IProductRepository {
         return productPage.getTotalElements();
     }
 
+    /**
+     * Fetches a paginated list of products filtered by category, brand, and status and converts them to domain entities.
+     *
+     * @param categoryId the category identifier to filter by, or {@code null} to ignore this filter
+     * @param brandId    the brand identifier to filter by, or {@code null} to ignore this filter
+     * @param status     the product status to filter by, or {@code null} to ignore this filter
+     * @param page       the 1-based page number to retrieve
+     * @param limit      the maximum number of items per page
+     * @return a list of products converted to {@code ProductEntity} instances for the requested page
+     */
     @Override
     public List<ProductEntity> findAllProducts(String categoryId, String brandId, String status, int page, int limit) {
         Pageable pageable = PageRequest.of(page - 1, limit);
@@ -50,6 +68,14 @@ public class ProductRepositoryAdapter implements IProductRepository {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves the total number of products matching the provided category, brand, and status filters.
+     *
+     * @param categoryId filter by category identifier, or null to ignore
+     * @param brandId    filter by brand identifier, or null to ignore
+     * @param status     filter by product status, or null to ignore
+     * @return the total count of matching products
+     */
     @Override
     public long countAllProducts(String categoryId, String brandId, String status) {
         Pageable pageable = PageRequest.of(0, 1);
@@ -57,6 +83,12 @@ public class ProductRepositoryAdapter implements IProductRepository {
         return productPage.getTotalElements();
     }
 
+    /**
+     * Converts an infrastructure Product model to a domain ProductEntity.
+     *
+     * @param product the infrastructure Product model to convert
+     * @return a ProductEntity populated with values copied from the provided product
+     */
     private ProductEntity convertToEntity(Product product) {
         ProductEntity entity = new ProductEntity();
         entity.setId(product.getId());

@@ -21,6 +21,11 @@ public class ProductController {
         this.productService = productService;
     }
 
+    /**
+     * Provide a health-check payload indicating the ProductController is alive.
+     *
+     * @return a map containing keys "result" (set to "SUCCESS"), "message" (a status string), and "data" (null)
+     */
     @GetMapping("/ping")
     public ResponseEntity<Map<String, Object>> ping() {
         Map<String, Object> response = new HashMap<>();
@@ -30,6 +35,19 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Retrieves a paginated list of products optionally filtered by category, brand, or status.
+     *
+     * @param page       page number to retrieve (1-based)
+     * @param limit      maximum number of products per page
+     * @param categoryId optional category identifier to filter products
+     * @param brandId    optional brand identifier to filter products
+     * @param status     optional product status to filter products
+     * @return a ResponseEntity containing a Map with keys:
+     *         - "result": `"SUCCESS"` when products are returned or `"ERROR"` on failure,
+     *         - "message": a human-readable status message,
+     *         - "data": a ProductSearchResponse when successful, or `null` on error.
+     */
     @GetMapping("")
     public ResponseEntity<Map<String, Object>> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
@@ -57,6 +75,19 @@ public class ProductController {
         }
     }
 
+    /**
+     * Searches products matching a free-text query with optional category and brand filters and paginated results.
+     *
+     * @param query      the search keywords to match against products
+     * @param page       the page number to return, starting at 1
+     * @param limit      the maximum number of items per page
+     * @param categoryId optional category id to filter results
+     * @param brandId    optional brand id to filter results
+     * @return           a ResponseEntity whose body is a map with keys:
+     *                   - "result": "SUCCESS" or "ERROR"
+     *                   - "message": a human-readable status message
+     *                   - "data": a ProductSearchResponse on success, or null on error
+     */
     @GetMapping("/search")
     public ResponseEntity<Map<String, Object>> searchProducts(
             @RequestParam String query,

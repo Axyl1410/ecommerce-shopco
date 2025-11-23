@@ -15,7 +15,12 @@ type Room = {
 
 const rooms = new Map<string, Room>();
 
-// Cleanup function
+/**
+ * Remove a connection from the named room and, if the room becomes empty, stop its broadcast interval and delete the room.
+ *
+ * @param room - The room name whose connection should be removed
+ * @param connection - The connection object to remove; no-op if the room does not exist
+ */
 function removeConnection(room: string, connection: Connection) {
   const roomData = rooms.get(room);
   if (!roomData) return;
@@ -29,7 +34,14 @@ function removeConnection(room: string, connection: Connection) {
   }
 }
 
-// Broadcast to all connections in a room
+/**
+ * Send a server-sent event containing the given data to every active connection in the specified room.
+ *
+ * Formats `data` as a JSON `data: ...` SSE event and enqueues it to each connection; connections that fail to accept the message are removed.
+ *
+ * @param room - The name of the room whose connections should receive the event
+ * @param data - The payload to send (will be JSON-stringified)
+ */
 function broadcastToRoom(room: string, data: unknown) {
   const roomData = rooms.get(room);
   if (!roomData) return;
@@ -46,7 +58,13 @@ function broadcastToRoom(room: string, data: unknown) {
   }
 }
 
-// Start broadcasting for a room (only if not already started)
+/**
+ * Begins a per-room periodic broadcast that sends a timestamp payload to all connections in the room every second.
+ *
+ * If the room does not exist or a broadcast is already active for that room, the function does nothing.
+ *
+ * @param room - The name of the room to start broadcasting for
+ */
 function startRoomBroadcast(room: string) {
   const roomData = rooms.get(room);
   if (!roomData || roomData.intervalId) return; // Already broadcasting
@@ -61,6 +79,14 @@ function startRoomBroadcast(room: string) {
   }, 1000);
 }
 
+/**
+ * Attaches the incoming GET request as a Server-Sent Events (SSE) client to a named room and returns the SSE response stream.
+ *
+ * The room name is taken from the request query parameter `room`, defaulting to `"default"`. The connection is registered in the room's connection set, receives an initial `{ message: "Connected!", room }` event, and will receive subsequent room broadcasts. When the request is aborted the connection is removed and the stream is closed.
+ *
+ * @param req - Incoming NextRequest containing the `room` query parameter and an abort signal
+ * @returns A Response that streams Server-Sent Events for the requested room with appropriate SSE headers
+ */
 export async function GET(req: NextRequest) {
   // Get room from query parameter (default to "default")
   const { searchParams } = new URL(req.url);

@@ -18,6 +18,14 @@ import {
 } from "./prompt-input";
 import { Response } from "./response";
 
+/**
+ * Renders a floating AI chat widget that captures the current page context and provides a conversation UI.
+ *
+ * The component updates its captured page context whenever the widget is open and the route or query params change,
+ * includes the latest context in outgoing messages' metadata, and reflects streaming/send status in the UI.
+ *
+ * @returns The chat widget as a JSX element.
+ */
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [pageContext, setPageContext] = useState<string>("");

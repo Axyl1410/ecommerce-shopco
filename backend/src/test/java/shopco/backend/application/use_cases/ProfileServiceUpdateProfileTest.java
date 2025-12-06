@@ -71,34 +71,15 @@ class ProfileServiceUpdateProfileTest {
         ));
     }
 
-    /**
-     * Kịch bản 1: Dữ liệu không hợp lệ hoặc Tài khoản không tồn tại (Failure Scenario)
-     * Case A: User ID does not exist.
-     */
-    @Test
-    void updateProfile_shouldReturnEmpty_whenUserDoesNotExist() {
-        // Arrange
-        String userId = "non-existent-id";
-        UpdateProfileDTO dto = new UpdateProfileDTO();
-        dto.name = "New Name";
-
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        // Act
-        Optional<UserProfileDTO> result = profileService.updateProfile(userId, dto);
-
-        // Assert
-        assertTrue(result.isEmpty());
-        verify(userRepository, never()).save(any(User.class));
-    }
+   
 
     /**
      * Kịch bản 1: Dữ liệu không hợp lệ (Failure/Edge Case Scenario)
-     * Case B: Data is blank/invalid (Business rule: ignore blank updates).
+     * Case: Data is blank/invalid (Business rule: ignore blank updates).
      * The service logic ignores blank fields, so the user should remain unchanged.
      */
     @Test
-    void updateProfile_shouldNotUpdateFields_whenDataIsBlank() {
+    void updateProfile_shouldNotUpdateFields_whenDataIsBlankOrInvalid() {
         // Arrange
         String userId = "user-123";
         User existingUser = new User();

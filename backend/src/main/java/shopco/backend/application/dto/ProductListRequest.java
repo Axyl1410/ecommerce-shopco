@@ -20,7 +20,6 @@ public class ProductListRequest {
      * Initializes `page` to 1 and `limit` to 10.
      */
     public ProductListRequest() {
-    public ProductListRequest() {
         this.page = 1;
         this.limit = 10;
     }

@@ -97,10 +97,12 @@ export function ActivityHistory({ orders, reviews }: ActivityHistoryProps) {
             <div key={r.id} className="rounded-md border p-4">
               <div className="flex items-center justify-between">
                 <div className="font-medium">{r.user}</div>
-                <div className="text-xs text-muted-foreground">{new Date(r.date).toLocaleDateString("en-US")}</div>
+                <div className="text-xs text-muted-foreground">
+                  {r.date ? new Date(r.date).toLocaleDateString("en-US") : ""}
+                </div>
               </div>
               <div className="text-yellow-500 text-sm">{"★".repeat(r.rating)}{"☆".repeat(Math.max(0, 5 - r.rating))}</div>
-              <p className="text-sm mt-1">{r.content}</p>
+              {r.content && <p className="text-sm mt-1">{r.content}</p>}
             </div>
           ))}
         </TabsContent>

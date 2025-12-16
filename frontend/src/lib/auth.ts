@@ -9,8 +9,8 @@ import { assertValue } from "./utils";
 export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
-    autoSignIn: false,
-    requireEmailVerification: true,
+    autoSignIn: true, // Auto sign in after registration
+    requireEmailVerification: false, // Disabled for development
     resetPasswordTokenExpiresIn: 60 * 60,
     minPasswordLength: 6,
 
@@ -22,7 +22,7 @@ export const auth = betterAuth({
     },
   },
   emailVerification: {
-    sendOnSignUp: true,
+    sendOnSignUp: false, // Disabled for development
     expiresIn: 60 * 60,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
@@ -34,40 +34,32 @@ export const auth = betterAuth({
   },
   socialProviders: {
     github: {
-      clientId: assertValue(
-        process.env.GITHUB_CLIENT_ID,
-        "Missing GITHUB_CLIENT_ID",
-      ),
-      clientSecret: assertValue(
-        process.env.GITHUB_CLIENT_SECRET,
-        "Missing GITHUB_CLIENT_SECRET",
-      ),
+      clientId: process.env.GITHUB_CLIENT_ID || "dummy-github-client-id",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || "dummy-github-secret",
     },
     discord: {
-      clientId: assertValue(
-        process.env.DISCORD_CLIENT_ID,
-        "Missing DISCORD_CLIENT_ID",
-      ),
-      clientSecret: assertValue(
-        process.env.DISCORD_CLIENT_SECRET,
-        "Missing DISCORD_CLIENT_SECRET",
-      ),
+      clientId: process.env.DISCORD_CLIENT_ID || "dummy-discord-client-id",
+      clientSecret: process.env.DISCORD_CLIENT_SECRET || "dummy-discord-secret",
     },
     google: {
-      clientId: assertValue(
-        process.env.GOOGLE_CLIENT_ID,
-        "Missing GOOGLE_CLIENT_ID",
-      ),
-      clientSecret: assertValue(
-        process.env.GOOGLE_CLIENT_SECRET,
-        "Missing GOOGLE_CLIENT_SECRET",
-      ),
+      clientId: process.env.GOOGLE_CLIENT_ID || "dummy-google-client-id",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "dummy-google-secret",
     },
   },
   account: {
     accountLinking: {
       enabled: true,
       trustedProviders: ["google", "github", "discord"],
+    },
+  },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "user",
+        input: false, // don't allow users to set their own role
+      },
     },
   },
   rateLimit: {

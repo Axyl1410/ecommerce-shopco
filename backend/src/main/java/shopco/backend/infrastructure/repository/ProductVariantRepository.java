@@ -13,4 +13,15 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
 
     @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId")
     List<ProductVariant> findByProductId(@Param("productId") String productId);
+
+    /**
+     * Count variants for a product
+     */
+    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE pv.productId = :productId")
+    int countByProductId(@Param("productId") String productId);
+
+    /**
+     * Delete all variants for a product
+     */
+    void deleteByProductId(String productId);
 }

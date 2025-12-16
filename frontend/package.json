@@ -89,6 +89,7 @@
     "use-stick-to-bottom": "^1.1.1",
     "usehooks-ts": "^3.1.0",
     "vaul": "^0.9.4",
+    "xlsx": "^0.18.5",
     "zod": "^4.1.12"
   },
   "devDependencies": {

@@ -48,4 +48,25 @@ public interface ProductRepository extends JpaRepository<Product, String> {
                         @Param("brandId") String brandId,
                         @Param("status") String status,
                         Pageable pageable);
+
+        /**
+         * Find all products for admin with keyword search and filters
+         */
+        @Query("SELECT DISTINCT p FROM Product p " +
+                        "WHERE (:keyword IS NULL OR :keyword = '' OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                        "   OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+                        "AND (:status IS NULL OR :status = '' OR CAST(p.status AS string) = :status) " +
+                        "AND (:brandId IS NULL OR :brandId = '' OR p.brandId = :brandId) " +
+                        "AND (:categoryId IS NULL OR :categoryId = '' OR p.categoryId = :categoryId)")
+        Page<Product> findAllProductsForAdmin(
+                        @Param("keyword") String keyword,
+                        @Param("status") String status,
+                        @Param("brandId") String brandId,
+                        @Param("categoryId") String categoryId,
+                        Pageable pageable);
+
+        /**
+         * Check if slug exists
+         */
+        boolean existsBySlug(String slug);
 }

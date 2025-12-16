@@ -1,14 +1,8 @@
 import { SePayPgClient } from "sepay-pg-node";
-import { assertValue } from "./utils";
 
-const MERCHANT_ID = assertValue(
-  process.env.SEPAY_MERCHANT_ID,
-  "SEPAY_MERCHANT_ID is not set",
-);
-const SECRET_KEY = assertValue(
-  process.env.SEPAY_SECRET_KEY,
-  "SEPAY_SECRET_KEY is not set",
-);
+// Make SePay optional for development
+const MERCHANT_ID = process.env.SEPAY_MERCHANT_ID || "dummy-merchant-id";
+const SECRET_KEY = process.env.SEPAY_SECRET_KEY || "dummy-secret-key";
 
 const client = new SePayPgClient({
   env: "sandbox",

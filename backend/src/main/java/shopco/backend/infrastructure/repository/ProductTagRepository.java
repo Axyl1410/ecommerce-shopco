@@ -13,4 +13,9 @@ public interface ProductTagRepository extends JpaRepository<ProductTag, String> 
 
     @Query("SELECT pt FROM ProductTag pt WHERE pt.productId = :productId")
     List<ProductTag> findByProductId(@Param("productId") String productId);
+
+    /**
+     * Delete all tags for a product
+     */
+    void deleteByProductId(String productId);
 }

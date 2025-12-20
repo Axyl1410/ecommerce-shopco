@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const BACKEND_BASE =
-  process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "";
+  process.env.BACKEND_BASE || process.env.NEXT_PUBLIC_API_URL || "";
 
 /**
  * Retrieve the authenticated user's cart, using a short-lived cache to reduce backend requests.
@@ -16,48 +16,69 @@ const BACKEND_BASE =
  * @returns The user's cart as JSON on success. On failure, a JSON error object with an appropriate HTTP status (401 for unauthorized, 500 for configuration or fetch errors).
  */
 export async function GET() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  let session = null;
+  try {
+    session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch (e) {
+    console.error("Auth error:", e);
   }
 
-  const userId = session?.user.id;
-  const cacheKey = `cart:userId:${userId}`;
-
-  if (!RedisClient.isOpen) {
-    await RedisClient.connect();
+  // ✅ Guest-safe
+  if (!session) {
+    return NextResponse.json({
+      items: [],
+      totalQuantity: 0,
+      totalPrice: 0,
+    });
   }
 
   if (!BACKEND_BASE) {
-    return NextResponse.json(
-      { error: "BACKEND_URL not configured" },
-      { status: 500 },
-    );
+    console.error("BACKEND_BASE is not configured");
+    return NextResponse.json({
+      items: [],
+      totalQuantity: 0,
+      totalPrice: 0,
+    });
   }
 
-  // BACKEND_BASE should include /api, e.g. http://localhost:8080/api
-  const path = `/cart/user/${userId}`;
+  const cacheKey = `cart:userId:${session.user.id}`;
 
+  // ✅ Redis FAIL-SOFT
   try {
-    const cached = await RedisClient.get(cacheKey);
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      return NextResponse.json(parsed);
+    if (RedisClient && !RedisClient.isOpen) {
+      await RedisClient.connect();
     }
 
-    const { data } = await axios.get<GetCartResponse>(`${BACKEND_BASE}${path}`);
+    const cached = await RedisClient.get(cacheKey);
+    if (cached) {
+      return NextResponse.json(JSON.parse(cached));
+    }
+  } catch (e) {
+    console.warn("Redis skipped:", e);
+  }
 
-    await RedisClient.setEx(cacheKey, 60, JSON.stringify(data));
+  // ✅ Backend FAIL-SOFT
+  try {
+    const { data } = await axios.get(
+      `${BACKEND_BASE}/cart/user/${session.user.id}`,
+    );
+
+    try {
+      await RedisClient.setEx(cacheKey, 60, JSON.stringify(data));
+    } catch {}
 
     return NextResponse.json(data);
   } catch (e) {
-    return NextResponse.json(
-      { error: "Failed to fetch cart" },
-      { status: 500 },
-    );
+    console.error("Backend cart error:", e);
+
+    // ❗ TUYỆT ĐỐI KHÔNG return 500 cho cart global
+    return NextResponse.json({
+      items: [],
+      totalQuantity: 0,
+      totalPrice: 0,
+    });
   }
 }
 
@@ -88,34 +109,21 @@ export async function POST(req: NextRequest) {
 
   const body = (await req.json().catch(() => null)) as {
     userId?: string;
-    sessionId?: string | null;
     variantId?: string;
     quantity?: number;
   } | null;
 
   if (
     !body ||
-    typeof body.userId !== "string" ||
+    body.userId !== session.user.id ||
     typeof body.variantId !== "string" ||
     typeof body.quantity !== "number" ||
     body.quantity <= 0
   ) {
-    return NextResponse.json(
-      {
-        error:
-          "Invalid body: require userId (string), variantId (string), quantity (>0)",
-      },
-      { status: 400 },
-    );
-  }
-
-  // Ensure the userId in body matches the authenticated user
-  if (body.userId !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
   try {
-    // BACKEND_BASE should include /api, e.g. http://localhost:8080/api
     const { data, status } = await axios.post(
       `${BACKEND_BASE}/cart`,
       {
@@ -126,17 +134,18 @@ export async function POST(req: NextRequest) {
       },
       { headers: { "content-type": "application/json" } },
     );
-    // Invalidate cache for this user
+
+    // Invalidate cache (FAIL-SOFT)
     try {
       if (!RedisClient.isOpen) {
         await RedisClient.connect();
       }
-      const cacheKey = `cart:userId:${body.userId}`;
-      await RedisClient.del(cacheKey);
+      await RedisClient.del(`cart:userId:${body.userId}`);
     } catch {}
 
     return NextResponse.json(data, { status });
-  } catch (e) {
+  } catch (err) {
+    console.error("POST /api/cart failed:", err);
     return NextResponse.json(
       { error: "Failed to add to cart" },
       { status: 500 },

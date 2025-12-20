@@ -5,8 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import shopco.backend.domain.entities.ProductEntity;
-import shopco.backend.domain.entities.BrandEntity;
-import shopco.backend.domain.entities.CategoryEntity;
 import shopco.backend.domain.repositories.IProductRepository;
 import shopco.backend.infrastructure.model.Product;
 import shopco.backend.infrastructure.repository.ProductRepository;

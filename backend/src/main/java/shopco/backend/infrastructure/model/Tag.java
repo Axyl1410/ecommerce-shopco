@@ -1,7 +1,6 @@
 package shopco.backend.infrastructure.model;
 
 import jakarta.persistence.*;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

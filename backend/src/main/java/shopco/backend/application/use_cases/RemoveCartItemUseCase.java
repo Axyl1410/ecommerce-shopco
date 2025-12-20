@@ -1,5 +1,6 @@
 package shopco.backend.application.use_cases;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import shopco.backend.infrastructure.model.Cart;
 import shopco.backend.infrastructure.model.CartItem;
@@ -20,7 +21,7 @@ public class RemoveCartItemUseCase {
         this.cartItemRepository = cartItemRepository;
     }
     
-    public void execute(String cartItemId) {
+    public void execute(@NonNull String cartItemId) {
         // 1. Find cart item
         CartItem cartItem = cartItemRepository.findById(cartItemId)
             .orElseThrow(() -> new RuntimeException("Cart item not found"));

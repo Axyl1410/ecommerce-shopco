@@ -325,9 +325,10 @@ model Order {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  items         OrderItem[]
-  payments      Payment[]
-  statusHistory OrderStatusHistory[]
+  items             OrderItem[]
+  payments          Payment[]
+  statusHistory     OrderStatusHistory[]
+  sepayTransactions SePayTransaction[] // Quan hệ với SePay webhook transactions
 
   // --- MỚI: Thêm liên kết Coupon ---
   couponId String?
@@ -588,4 +589,68 @@ model Banner {
   updatedAt DateTime @updatedAt
 
   @@map("banner")
+}
+
+// =================================================================
+// 6. SE PAY TRANSACTION (Webhook từ SePay)
+// =================================================================
+
+model SePayTransaction {
+  id String @id @default(cuid())
+
+  // ID giao dịch trên SePay (từ webhook)
+  sepayId Int @unique
+
+  // Brand name của ngân hàng
+  gateway String
+
+  // Thời gian xảy ra giao dịch phía ngân hàng
+  transactionDate String
+
+  // Số tài khoản ngân hàng
+  accountNumber String
+
+  // Mã code thanh toán (SePay tự nhận diện)
+  code String?
+
+  // Nội dung chuyển khoản
+  content String
+
+  // Loại giao dịch: "in" là tiền vào, "out" là tiền ra
+  transferType String
+
+  // Số tiền giao dịch (đơn vị: VND)
+  transferAmount Int
+
+  // Số dư tài khoản (lũy kế)
+  accumulated Int
+
+  // Tài khoản ngân hàng phụ (tài khoản định danh)
+  subAccount String?
+
+  // Mã tham chiếu của tin nhắn sms (có thể dùng để liên kết với Order)
+  referenceCode String
+
+  // Toàn bộ nội dung tin nhắn sms
+  description String @db.Text
+
+  // Liên kết với Order (nếu có) - dựa vào referenceCode hoặc orderNo
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  // Trạng thái xử lý webhook
+  processed   Boolean   @default(false)
+  processedAt DateTime?
+
+  // Ghi chú xử lý (nếu có lỗi hoặc cần xử lý thủ công)
+  processingNotes String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sepayId])
+  @@index([referenceCode])
+  @@index([orderId])
+  @@index([transactionDate])
+  @@map("sepay_transaction")
 }

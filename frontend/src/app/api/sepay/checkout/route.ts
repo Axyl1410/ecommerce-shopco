@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     }
     const {
       operation = "PURCHASE",
-      payment_method = "BANK_TRANSFER",
+      // payment_method = "BANK_TRANSFER",
       order_invoice_number,
       order_amount,
       currency,
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     const checkoutURL = client.checkout.initCheckoutUrl();
     const checkoutFormfields = client.checkout.initOneTimePaymentFields({
       operation,
-      payment_method,
+      // payment_method,
       order_invoice_number,
       order_amount,
       currency,

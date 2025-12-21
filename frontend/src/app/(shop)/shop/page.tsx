@@ -228,7 +228,7 @@ export default function ShopPage() {
                       <ProductCard
                         key={product.id}
                         data={{
-                          id: Number(product.id),
+                          id: product.id,
                           title: product.name,
                           srcUrl: product.image,
                           price: product.price,

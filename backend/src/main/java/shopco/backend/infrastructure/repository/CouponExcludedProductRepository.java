@@ -3,8 +3,9 @@ package shopco.backend.infrastructure.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import shopco.backend.infrastructure.model.CouponExcludedProduct;
+import shopco.backend.infrastructure.model.CouponExcludedProduct.CouponExcludedProductId;
 
 @Repository
-public interface CouponExcludedProductRepository extends JpaRepository<CouponExcludedProduct, String> {
+public interface CouponExcludedProductRepository extends JpaRepository<CouponExcludedProduct, CouponExcludedProductId> {
 
 }

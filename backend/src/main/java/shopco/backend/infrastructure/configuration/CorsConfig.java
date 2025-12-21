@@ -2,6 +2,7 @@ package shopco.backend.infrastructure.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 public class CorsConfig implements WebMvcConfigurer {
     
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000", "http://127.0.0.1:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")

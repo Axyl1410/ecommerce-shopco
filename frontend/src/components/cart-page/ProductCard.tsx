@@ -10,6 +10,7 @@ import Link from "next/link";
 import { PiTrashFill } from "react-icons/pi";
 import { Button } from "../ui/button";
 import { formatCurrency, toCents, fromCents } from "@/lib/utils";
+import slugify from "slugify"; // ✅ ADD
 
 type ProductCardProps = {
   data: LocalCartItem;
@@ -19,10 +20,19 @@ const ProductCard = ({ data }: ProductCardProps) => {
   const dispatch = useAppDispatch();
   const { mutate: updateQty } = useUpdateCartItemQuantity();
 
+  // ✅ FIX: slug chuẩn (lowercase, không dấu)
+  const productSlug = slugify(data.name, {
+    lower: true,
+    strict: true,
+    locale: "vi",
+  });
+
+  const productHref = `/shop/product/${data.id}/${productSlug}`;
+
   return (
     <div className="flex items-start space-x-4">
       <Link
-        href={`/shop/product/${data.id}/${data.name.split(" ").join("-")}`}
+        href={productHref}
         className="aspect-square w-full min-w-[100px] max-w-[100px] overflow-hidden rounded-lg bg-[#F0EEED] sm:max-w-[124px]"
       >
         <Image
@@ -34,14 +44,16 @@ const ProductCard = ({ data }: ProductCardProps) => {
           priority
         />
       </Link>
+
       <div className="flex w-full flex-col self-stretch">
         <div className="flex items-center justify-between">
           <Link
-            href={`/shop/product/${data.id}/${data.name.split(" ").join("-")}`}
+            href={productHref}
             className="text-base font-bold text-black xl:text-xl"
           >
             {data.name}
           </Link>
+
           <Button
             variant="ghost"
             size="icon"
@@ -58,25 +70,30 @@ const ProductCard = ({ data }: ProductCardProps) => {
             <PiTrashFill className="text-xl text-red-600 md:text-2xl" />
           </Button>
         </div>
+
         <div className="-mt-1">
           <span className="mr-1 text-xs text-black md:text-sm">Size:</span>
           <span className="text-xs text-black/60 md:text-sm">
             {data.attributes[0]}
           </span>
         </div>
+
         <div className="-mt-1.5 mb-auto">
           <span className="mr-1 text-xs text-black md:text-sm">Color:</span>
           <span className="text-xs text-black/60 md:text-sm">
             {data.attributes[1]}
           </span>
         </div>
+
         <div className="flex flex-wrap items-center justify-between">
           <div className="flex items-center space-x-[5px] xl:space-x-2.5">
             {data.discount.percentage > 0 ? (
               <>
                 {(() => {
                   const priceCents = toCents(data.price);
-                  const discountCents = Math.round((priceCents * data.discount.percentage) / 100);
+                  const discountCents = Math.round(
+                    (priceCents * data.discount.percentage) / 100
+                  );
                   const finalCents = priceCents - discountCents;
                   return (
                     <>
@@ -115,9 +132,12 @@ const ProductCard = ({ data }: ProductCardProps) => {
                 </span>
               </>
             ) : (
-              <span className="font-bold text-black text-xl xl:text-2xl">{formatCurrency(data.price)}</span>
+              <span className="font-bold text-black text-xl xl:text-2xl">
+                {formatCurrency(data.price)}
+              </span>
             )}
           </div>
+
           <CartCounter
             initialValue={data.quantity}
             onAdd={() => {
@@ -130,9 +150,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
             onRemove={() => {
               if (!data.cartItemId) return;
               if (data.quantity <= 1) {
-                axios
-                  .delete(`/api/cart/items/${data.cartItemId}`)
-                  .catch(() => {});
+                axios.delete(`/api/cart/items/${data.cartItemId}`).catch(() => {});
               } else {
                 updateQty({
                   cartItemId: data.cartItemId,

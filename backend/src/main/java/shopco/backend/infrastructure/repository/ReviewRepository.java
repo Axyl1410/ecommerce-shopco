@@ -9,4 +9,5 @@ import shopco.backend.infrastructure.model.Review;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, String> {
 	List<Review> findByUserIdOrderByCreatedAtDesc(String userId);
+	List<Review> findByProductId(String productId);
 }

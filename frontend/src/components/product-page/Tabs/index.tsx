@@ -7,6 +7,18 @@ import FaqContent from "./FaqContent";
 import ProductDetailsContent from "./ProductDetailsContent";
 import ReviewsContent from "./ReviewsContent";
 
+type ProductData = {
+  id: string;
+  title: string;
+  description?: string;
+  categoryId?: string;
+  categoryName?: string;
+  brandName?: string;
+  variants?: any[];
+  reviews?: any[];
+  tags?: string[];
+};
+
 type TabBtn = {
   id: number;
   label: string;
@@ -27,7 +39,7 @@ const tabBtnData: TabBtn[] = [
   },
 ];
 
-const Tabs = () => {
+const Tabs = ({ productData, onReviewSubmitted }: { productData: ProductData; onReviewSubmitted?: () => void }) => {
   const [active, setActive] = useState<number>(1);
 
   return (
@@ -51,8 +63,8 @@ const Tabs = () => {
         ))}
       </div>
       <div className="mb-12 sm:mb-16">
-        {active === 1 && <ProductDetailsContent />}
-        {active === 2 && <ReviewsContent />}
+        {active === 1 && <ProductDetailsContent productData={productData} />}
+        {active === 2 && <ReviewsContent productData={productData} onReviewSubmitted={onReviewSubmitted} />}
         {active === 3 && <FaqContent />}
       </div>
     </div>

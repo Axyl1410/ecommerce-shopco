@@ -25,6 +25,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GetProductDetailsUseCaseTest {
 
+    //kiểm tra dữ liệu chi tiết sản phẩm trả về từ use case có đúng không
+    //lấy các data giả
     @Mock
     private IProductRepositoryDetails productRepository;
 
@@ -61,6 +63,7 @@ class GetProductDetailsUseCaseTest {
     private Category category;
     private Tag tag;
 
+    //chuẩn bị dữ liệu trước mỗi test
     @BeforeEach
     void setUp() {
         // Setup test data
@@ -116,6 +119,7 @@ class GetProductDetailsUseCaseTest {
         tag.setName("Test Tag");
     }
 
+    //kiểm tra productId =  null - trả về ngoại lệ - không truy vấn cơ sở dữ liệu
     @Test
     void shouldThrowExceptionWhenProductIdIsNull() {
         assertThatThrownBy(() -> useCase.execute(null))
@@ -123,6 +127,7 @@ class GetProductDetailsUseCaseTest {
             .hasMessage("Product ID cannot be null or empty");
     }
 
+    //kiểm tra productId = "" - trả về ngoại lệ - dừng luồng xử lý
     @Test
     void shouldThrowExceptionWhenProductIdIsEmpty() {
         assertThatThrownBy(() -> useCase.execute(""))
@@ -130,6 +135,7 @@ class GetProductDetailsUseCaseTest {
             .hasMessage("Product ID cannot be null or empty");
     }
 
+    //kiểm tra khi không tìm thấy sản phẩm - trả về Optional.empty() - 404 Not Found
     @Test
     void shouldReturnEmptyWhenProductNotFound() {
         when(productRepository.findProductById("non-existent")).thenReturn(Optional.empty());
@@ -139,6 +145,7 @@ class GetProductDetailsUseCaseTest {
         assertThat(result).isEmpty();
     }
 
+    //kiểm tra khi sản phẩm không ở trạng thái active - trả về Optional.empty() - 404 Not Found
     @Test
     void shouldReturnEmptyWhenProductNotActive() {
         ProductEntity inactiveProduct = new ProductEntity(
@@ -153,7 +160,7 @@ class GetProductDetailsUseCaseTest {
             "default.jpg",
             "SEO Title",
             "SEO Desc",
-            ProductStatus.DRAFT, // Not active
+            ProductStatus.DRAFT, // Not active - người dùng không thể xem
             LocalDateTime.now(),
             LocalDateTime.now(),
             null, null, null, null, null, null, null
@@ -166,6 +173,7 @@ class GetProductDetailsUseCaseTest {
         assertThat(result).isEmpty();
     }
 
+    //kiểm tra khi sản phẩm tồn tại và ở trạng thái active - trả về chi tiết sản phẩm đầy đủ
     @Test
     void shouldReturnProductDetailsWhenProductExistsAndActive() {
         // Mock repository calls
@@ -198,6 +206,7 @@ class GetProductDetailsUseCaseTest {
         assertThat(dto.getReviews()).hasSize(1);
     }
 
+    //kiểm tra trạng thái tồn kho dựa trên tổng số lượng tồn kho của các biến thể sản phẩm
     @Test
     void shouldReturnLowStockStatusWhenTotalStockIsLow() {
         variant.setStockQuantity(5); // Low stock
@@ -215,6 +224,7 @@ class GetProductDetailsUseCaseTest {
         assertThat(dto.getStockStatus()).isEqualTo("low_stock");
     }
 
+    //kiểm tra trạng thái hết hàng khi tổng số lượng tồn kho của các biến thể sản phẩm bằng 0 hoặc không có biến thể nào
     @Test
     void shouldReturnOutOfStockStatusWhenNoStock() {
         variant.setStockQuantity(0); // Out of stock
@@ -232,6 +242,7 @@ class GetProductDetailsUseCaseTest {
         assertThat(dto.getStockStatus()).isEqualTo("out_of_stock");
     }
 
+    //kiểm tra trạng thái hết hàng khi không có biến thể sản phẩm
     @Test
     void shouldReturnOutOfStockStatusWhenNoVariants() {
         when(productRepository.findProductById("prod-123")).thenReturn(Optional.of(productEntity));

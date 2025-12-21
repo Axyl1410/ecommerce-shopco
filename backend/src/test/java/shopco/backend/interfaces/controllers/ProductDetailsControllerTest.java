@@ -21,12 +21,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ProductDetailsController.class)
 class ProductDetailsControllerTest {
 
+    // kiểm tra controller có trả về đúng dữ liệu khi gọi - khi khi sản phẩm tồn tại hoặc không tồn tại.
+    //mô phỏng CRUD
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private IProductServiceDetails productServiceDetails;
 
+
+    // sản phẩm tồn tại trả về 200 + dữ liệu
     @Test
     void shouldReturnProductDetailsWhenProductExists() throws Exception {
         // Given
@@ -41,6 +45,8 @@ class ProductDetailsControllerTest {
             .andExpect(jsonPath("$.stockStatus").value("in_stock"));
     }
 
+
+    // sản phẩm không tồn tại trả về 404
     @Test
     void shouldReturnNotFoundWhenProductDoesNotExist() throws Exception {
         // Given
@@ -51,6 +57,7 @@ class ProductDetailsControllerTest {
             .andExpect(status().isNotFound());
     }
 
+    //tạo dữ liệu sản phẩm mẫu để test
     private ProductDetailsDto createTestProductDetails() {
         return new ProductDetailsDto(
             "prod-123",

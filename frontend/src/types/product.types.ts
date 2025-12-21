@@ -11,6 +11,17 @@ export type Product = {
   price: number;
   discount: Discount;
   rating: number;
+  // Product specifications/attributes
+  specifications?: {
+    material?: string;
+    care?: string;
+    fit?: string;
+    pattern?: string;
+    color?: string;
+    size?: string;
+    brand?: string;
+    category?: string;
+  };
 };
 
 // ============= NEW TYPES FOR PRODUCT FILTERING & PAGINATION =============

@@ -7,6 +7,7 @@ import AddToCardSection from "./AddToCardSection";
 import ColorSelection from "./ColorSelection";
 import PhotoSection from "./PhotoSection";
 import SizeSelection from "./SizeSelection";
+import CompareButton from "@/components/common/CompareButton";
 
 const Header = ({ data }: { data: Product }) => {
   return (
@@ -81,7 +82,15 @@ const Header = ({ data }: { data: Product }) => {
           <hr className="h-[1px] border-t-black/10 my-5" />
           <SizeSelection />
           <hr className="hidden md:block h-[1px] border-t-black/10 my-5" />
-          <AddToCardSection data={data} />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-5">
+            <AddToCardSection data={data} />
+            <div className="hidden md:block">
+              <CompareButton product={data} variant="text" />
+            </div>
+          </div>
+          <div className="md:hidden">
+            <CompareButton product={data} variant="text" className="w-full" />
+          </div>
         </div>
       </div>
     </>

@@ -40,12 +40,10 @@ public class ProductController {
         try {
             ProductListRequest request = new ProductListRequest(page, limit, categoryId, brandId, status);
             ProductSearchResponse response = productService.getAllProducts(request);
-
             Map<String, Object> result = new HashMap<>();
             result.put("result", "SUCCESS");
             result.put("message", "Products retrieved successfully");
             result.put("data", response);
-
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
             Map<String, Object> errorResponse = new HashMap<>();

@@ -15,7 +15,6 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  runtime: "nodejs",
   // add all routes that need to be proxied
   matcher: ["/admin/:path*", "/api/admin/:path*"],
 };

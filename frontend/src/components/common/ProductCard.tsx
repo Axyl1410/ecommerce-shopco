@@ -4,6 +4,7 @@ import React from "react";
 import type { Product } from "@/types/product.types";
 import { formatCurrency, toCents, fromCents } from "@/lib/utils";
 import Rating from "../ui/Rating";
+import CompareButton from "./CompareButton";
 
 type ProductCardProps = {
   data: Product;
@@ -11,10 +12,11 @@ type ProductCardProps = {
 
 const ProductCard = ({ data }: ProductCardProps) => {
   return (
-    <Link
-      href={`/shop/product/${data.id}/${data.title.split(" ").join("-")}`}
-      className="flex flex-col items-start aspect-auto"
-    >
+    <div className="group relative flex flex-col items-start aspect-auto">
+      <Link
+        href={`/shop/product/${data.id}/${data.title.split(" ").join("-")}`}
+        className="flex flex-col items-start w-full"
+      >
       <div className="bg-[#F0EEED] rounded-[13px] lg:rounded-[20px] w-full lg:max-w-[295px] aspect-square mb-2.5 xl:mb-4 overflow-hidden">
         <Image
           src={data.srcUrl}
@@ -87,7 +89,11 @@ const ProductCard = ({ data }: ProductCardProps) => {
           <span className="font-bold text-black text-xl xl:text-2xl">{formatCurrency(data.price)}</span>
         )}
       </div>
-    </Link>
+      </Link>
+      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <CompareButton product={data} variant="icon" />
+      </div>
+    </div>
   );
 };
 
